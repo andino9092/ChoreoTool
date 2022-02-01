@@ -6,13 +6,26 @@ export default function Login(){
     const [data, setData] = useState();
 
     const handleLogin = () => {
-        fetch("choreoTool/authorize/")
+        fetch("/choreoTool/isAuthenticated")
             .then((response) => response.json())
             .then((data) => {
-               window.location.replace(data.url);
-            })
-
-    }
+                logIn(data.status);
+                console.log(data.status);
+                if (!data.status){
+                    fetch("/choreoTool/authorize")
+                        .then((response) => response.json())
+                        .then((data) => {
+                            window.location.replace(data.url);
+                        })
+                }
+            });
+        fetch("/choreoTool/getData")
+            .then((response) => response.json())
+            .then((data) => {
+                setData(data.user);
+                console.log(data.user);
+            });
+      };
 
     return (
         <div>
