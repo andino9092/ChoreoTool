@@ -6,29 +6,30 @@ import {
   Link,
 } from 'react-router-dom';
 import Login from "./components/Login";
-import User from "./components/User";
+import Dashboard from "./components/Dashboard";
 import './App.css';
 import React, {useState, useEffect} from 'react'
+import {useNavigate, Navigate} from 'react-router-dom';
 
 export default function App() {
   const [isLoggedIn, logIn] = useState(false);
 
   useEffect(() => {
     fetch("/choreoTool/isAuthenticated")
-    .then((response) => response.json())
-    .then((data) => {
-        logIn(data.status);
-        console.log(data.status);
-    });
-  });
+      .then((response) => response.json())
+      .then((data) => {
+          logIn(data.status);
+          console.log(data.status);
+      });
+  })
+
 
   return (
     <Router>
-      
+      {isLoggedIn ? <Navigate to="/dashboard"/> : ""}
       <Routes>
-        
-        <Route path = "/Login" element={<Login/>}/>
-        <Route path="/user" element={<User/>}/>
+        <Route path = "/" element={<Login/>}/>
+        <Route path="/dashboard" element={<Dashboard/>}/>
       </Routes>
     </Router>
   )

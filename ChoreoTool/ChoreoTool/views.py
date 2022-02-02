@@ -1,3 +1,4 @@
+from email.policy import HTTP
 from lib2to3.pgen2 import token
 from requests import Request, post
 from django.shortcuts import redirect, render
@@ -7,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from dotenv import load_dotenv
-from .util import update_or_create_user_tokens, is_spotify_authenticated
+from .util import get_user_tokens, update_or_create_user_tokens, is_spotify_authenticated
 from .models import SpotifyToken, UserData
 import os
 
@@ -21,17 +22,12 @@ CLIENT_ID = os.environ.get('CLIENT_ID')
 def AuthURL(request, format = None):
     if request.method == 'GET':
         scopes = 'user-library-read user-read-email playlist-read-private'
-        print(os.environ.get('AUTH_URL'))
         url = Request('GET', AUTH_URL, params= {
             'scope': scopes,
             'response_type': 'code',
             'redirect_uri': REDIRECT_URI,
             'client_id': CLIENT_ID,
         }).prepare().url
-        userdata = UserData(spotifyId="123")
-        user = UserDataSerializer(data=userdata)
-        if user.is_valid():
-            user.save()
         return Response({'url':url}, status=status.HTTP_200_OK)
  
 def spotifyCallback(request, format = None):
@@ -60,31 +56,33 @@ def spotifyCallback(request, format = None):
     update_or_create_user_tokens(
         request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
-    userData = Request('GET', 'https://api.spotify.com/v1/me', params={
-        'Authorization' : access_token,
-        'Content-Type' : 'application/json',
-    }).json()
+    # userData = Request('GET', 'https://api.spotify.com/v1/me', params={
+    #     'Authorization' : access_token,
+    #     'Content-Type' : 'application/json',
+    # }).json()
 
-    user = UserDataSerializer(userData.id)
-    if user.is_valid():
-        user.save()
-    print(user)
-    print(error)
-    return redirect("frontend:")
+    # print(userData)
+    # user = UserDataSerializer(userData.id)
+    # if user.is_valid():
+    #     user.save()
+
 
 @api_view(['GET'])
 def IsAuthenticated(request, format = None):
     is_authenticate = is_spotify_authenticated(request.session.session_key)
     return Response({'status': is_authenticate}, status.HTTP_200_OK)
-
-@api_view(['GET'])
-def Data(request):
-    return Response({'session': request.session.session_key}, status.HTTP_200_OK)
     
 @api_view(['GET'])
 def getUsers(request):
-    users = UserData.objects.all()
-    serializer = UserDataSerializer(users, many=True)
+    spotifyAccessToken = get_user_tokens(request.session.session_key).access_token
+
+    userData = Request("GET", "https://api.spotify.com/v1/me", {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + spotifyAccessToken,
+    }).json
+    user = userData.id
+    serializer = UserDataSerializer(user, many=True)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
 @api_view(['GET'])

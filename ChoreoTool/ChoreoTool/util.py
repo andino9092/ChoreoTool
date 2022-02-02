@@ -29,6 +29,7 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
 
 def is_spotify_authenticated(session_id):
     tokens = get_user_tokens(session_id)
+    print(tokens)
     if tokens:
         expiry = tokens.expires_in
         if expiry <= timezone.now():
@@ -45,11 +46,11 @@ def refresh_spotify_token(session_id):
         'client_id': os.environ.get('CLIENT_ID'),
         'client_secret': os.environ.get('CLIENT_SECRET'),  
     }).json()
-
+    print("hello",response.get('access_token'))
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
     refresh_token = response.get(refresh_token)
-
+    print(response.get(refresh_token))
     update_or_create_user_tokens(
         session_id, access_token, token_type, expires_in, refresh_token)
