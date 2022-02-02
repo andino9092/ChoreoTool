@@ -5,7 +5,7 @@ export default function Login(){
     const [isLoggedIn, logIn] = useState(false);
     const [data, setData] = useState();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         fetch("/choreoTool/isAuthenticated")
             .then((response) => response.json())
             .then((data) => {
@@ -15,15 +15,11 @@ export default function Login(){
                     fetch("/choreoTool/authorize")
                         .then((response) => response.json())
                         .then((data) => {
+                            console.log(data)
                             window.location.replace(data.url);
+                            console.log(data)
                         })
                 }
-            });
-        fetch("/choreoTool/getData")
-            .then((response) => response.json())
-            .then((data) => {
-                setData(data.user);
-                console.log(data.user);
             });
       };
 

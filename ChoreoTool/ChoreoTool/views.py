@@ -1,12 +1,14 @@
-from tkinter import N
+from lib2to3.pgen2 import token
 from requests import Request, post
 from django.shortcuts import redirect, render
+from .serializers import SpotifyTokenSerializer, UserDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from dotenv import load_dotenv
 from .util import update_or_create_user_tokens, is_spotify_authenticated
+from .models import SpotifyToken, UserData
 import os
 
 load_dotenv()
@@ -26,13 +28,16 @@ def AuthURL(request, format = None):
             'redirect_uri': REDIRECT_URI,
             'client_id': CLIENT_ID,
         }).prepare().url
-        print(url)
-
+        userdata = UserData(spotifyId="123")
+        user = UserDataSerializer(data=userdata)
+        if user.is_valid():
+            user.save()
         return Response({'url':url}, status=status.HTTP_200_OK)
-
+ 
 def spotifyCallback(request, format = None):
     print("hello")
     code = request.GET.get('code')
+    error = request.GET.get('error')
     response = post('https://accounts.spotify.com/api/token', data={
         'grant_type' : 'authorization_code',
         'code' : code,
@@ -55,6 +60,16 @@ def spotifyCallback(request, format = None):
     update_or_create_user_tokens(
         request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
+    userData = Request('GET', 'https://api.spotify.com/v1/me', params={
+        'Authorization' : access_token,
+        'Content-Type' : 'application/json',
+    }).json()
+
+    user = UserDataSerializer(userData.id)
+    if user.is_valid():
+        user.save()
+    print(user)
+    print(error)
     return redirect("frontend:")
 
 @api_view(['GET'])
@@ -62,7 +77,18 @@ def IsAuthenticated(request, format = None):
     is_authenticate = is_spotify_authenticated(request.session.session_key)
     return Response({'status': is_authenticate}, status.HTTP_200_OK)
 
-class Data(APIView):
-    def currentUser(request):
-        user = request.user 
-        return Response({'user': user})
+@api_view(['GET'])
+def Data(request):
+    return Response({'session': request.session.session_key}, status.HTTP_200_OK)
+    
+@api_view(['GET'])
+def getUsers(request):
+    users = UserData.objects.all()
+    serializer = UserDataSerializer(users, many=True)
+    return Response({'data':serializer.data}, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getTokens(request):
+    tokens = SpotifyToken.objects.all()
+    serializer = SpotifyTokenSerializer(tokens, many=True)
+    return Response({'data':serializer.data}, status.HTTP_200_OK)

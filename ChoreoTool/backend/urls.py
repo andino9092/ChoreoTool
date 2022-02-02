@@ -21,5 +21,5 @@ from ChoreoTool import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('choreoTool/', include('ChoreoTool.urls')),
-    
+    path('/', include('frontend.urls')),
 ]
