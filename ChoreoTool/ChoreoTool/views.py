@@ -43,7 +43,6 @@ def spotifyCallback(request, format = None):
     }).json()
 
 
-    print(response)
 
     access_token = response.get('access_token')
     token_type = response.get('token_type')
