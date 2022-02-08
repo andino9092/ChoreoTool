@@ -15,12 +15,13 @@ export default function App() {
   const [isLoggedIn, logIn] = useState(false);
 
   useEffect(() => {
-    fetch("/choreoTool/isAuthenticated")
-      .then((response) => response.json())
-      .then((data) => {
-          logIn(data.status);
-          console.log(data.status);
-      });
+    if (!isLoggedIn){
+      fetch("/choreoTool/isAuthenticated")
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
+    }
   })
 
 
