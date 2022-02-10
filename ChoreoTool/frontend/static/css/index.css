@@ -15,7 +15,7 @@
 
 .nav-item{
     padding: 10px;
-    font-size: larger;
+    font-size: 20px;
 }
 
 .spotify{
@@ -25,15 +25,19 @@
     font-weight: lighter;
 }
 
-.btn{
-    border-radius: 40px;
-    background-color: green;
-    color: black;
-    overflow: hidden;
-}
 
 .align{
     display: table-cell;
     vertical-align: middle;
-    
+
+}
+
+a{
+    color: white;
+}
+
+a:hover{
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
 }

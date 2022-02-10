@@ -17,21 +17,17 @@ export default function Navbar(){
                     <a class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <div className="align">
-                        <a class="nav-link">Features</a>
+                    <div class="nav-link">
+                        <Link to="/create">
+                            Create Formation
+                        </Link>
                     </div>
-                    
                 </li>
                 <li class="nav-item">
-                    <a>
-                        <div className="nav-link">
-                            Pricing
-                        </div>
-                    </a>
+                    <a className="nav-link">Prices</a>
                 </li>
                 <li class="nav-item">
-                    <div className="btn">Login</div>
-                    
+                    <Login/>
                 </li>
                 
                 </ul>
