@@ -1,0 +1,39 @@
+@font-face {
+    font-family: "Circular Std";
+    src: url(circular-std-medium-500.ttf);
+}
+.brand{
+    text-align: center;
+    color: white;
+    font-size: xx-large;
+}
+
+.navbar{
+    height: 75px;
+    background-color: black;
+}
+
+.nav-item{
+    padding: 10px;
+    font-size: larger;
+}
+
+.spotify{
+    background-image: linear-gradient(to bottom right, rgb(73, 66, 66), black);
+    color: white;
+    font-family: "Circular Std";
+    font-weight: lighter;
+}
+
+.btn{
+    border-radius: 40px;
+    background-color: green;
+    color: black;
+    overflow: hidden;
+}
+
+.align{
+    display: table-cell;
+    vertical-align: middle;
+    
+}

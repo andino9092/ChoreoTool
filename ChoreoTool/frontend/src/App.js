@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,31 +6,22 @@ import {
 } from 'react-router-dom';
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
-import './App.css';
+import Navbar from './components/Navbar';
+import CreateFormationSlide from './components/CreateFormationSlide'
 import React, {useState, useEffect} from 'react'
 import {useNavigate, Navigate} from 'react-router-dom';
 
 export default function App() {
-  const [isLoggedIn, logIn] = useState(false);
-
-  useEffect(() => {
-    if (!isLoggedIn){
-      fetch("/choreoTool/isAuthenticated")
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-        })
-    }
-  })
-
 
   return (
-    <Router>
-      {isLoggedIn ? <Navigate to="/dashboard"/> : ""}
+    <div className="spotify">
+      <Router >
+      <Navbar/>
       <Routes>
-        <Route path = "/" element={<Login/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}/>
+        <Route path="/" element={<Dashboard/>}/>
+        <Route path="/create" element={<CreateFormationSlide/>}/>
       </Routes>
     </Router>
+    </div>
   )
 }

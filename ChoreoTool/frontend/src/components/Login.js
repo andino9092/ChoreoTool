@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 
 export default function Login(){
 
     const [isLoggedIn, logIn] = useState(false);
     const [data, setData] = useState();
 
-    const handleLogin = async () => {
+    useEffect(() => {
+        logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
+      }, []);
+    
+      useEffect(() => {
+        window.localStorage.setItem('isLoggedIn', isLoggedIn);
+      }, [isLoggedIn]);
+
+    const handleLogin = () => {
         fetch("/choreoTool/isAuthenticated")
             .then((response) => response.json())
             .then((data) => {
                 logIn(data.status);
-                console.log(data.status);
                 if (!data.status){
                     fetch("/choreoTool/authorize")
                         .then((response) => response.json())
@@ -24,10 +31,12 @@ export default function Login(){
       };
 
     return (
-        <div>
-            <button onClick={handleLogin}>
-                Authenticate with Spotify
-            </button>
+        <div className="nav-link">
+            {isLoggedIn ? "{UserName}" : 
+                <a className="" onClick={handleLogin}>
+                    Login
+                </a>
+            }
         </div>
     )
 }
