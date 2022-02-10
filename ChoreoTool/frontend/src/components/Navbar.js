@@ -14,7 +14,11 @@ export default function Navbar(){
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto align-middle">
                 <li class="nav-item active">
-                    <a class="nav-link">Home</a>
+                    <div class="nav-link">
+                        <Link to="/">
+                            Home
+                        </Link>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <div class="nav-link">
@@ -22,9 +26,6 @@ export default function Navbar(){
                             Create Formation
                         </Link>
                     </div>
-                </li>
-                <li class="nav-item">
-                    <a className="nav-link">Prices</a>
                 </li>
                 <li class="nav-item">
                     <Login/>

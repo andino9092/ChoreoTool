@@ -52,7 +52,7 @@ export default function Login(){
     }
 
     return (
-        <div className="nav-link" style={btn} onMouseEnter={handleHover} onMouseLeave={handleHover}>
+        <div className="nav-link" style={isLoggedIn ? {} : btn} onMouseEnter={handleHover} onMouseLeave={handleHover}>
             {isLoggedIn ? "{UserName}" : 
                 <a className="" onClick={handleLogin}>
                     Log In 
