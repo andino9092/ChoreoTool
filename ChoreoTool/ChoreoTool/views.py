@@ -1,6 +1,6 @@
 from email.policy import HTTP
 from lib2to3.pgen2 import token
-from requests import Request, post
+from requests import Request, post, get
 from django.shortcuts import redirect, render
 from .serializers import SpotifyTokenSerializer, UserDataSerializer
 from rest_framework.decorators import api_view
@@ -52,6 +52,8 @@ def spotifyCallback(request, format = None):
         expires_in = response.get('expires_in')
         error = response.get('error')
 
+        print(refresh_token)
+
         if not request.session.exists(request.session.session_key):
             request.session.create()
         print(request.session.session_key)
@@ -63,20 +65,26 @@ def spotifyCallback(request, format = None):
 
 @api_view(['GET'])
 def IsAuthenticated(request, format = None):
+    print(request.session.session_key)
     is_authenticate = is_spotify_authenticated(request.session.session_key)
+    print(is_authenticate)
     return Response({'status': is_authenticate}, status.HTTP_200_OK)
     
 @api_view(['GET'])
 def getUsers(request):
     spotifyAccessToken = get_user_tokens(request.session.session_key).access_token
-
-    userData = Request("GET", "https://api.spotify.com/v1/me", {
+    userData = get("https://api.spotify.com/v1/me",headers={
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + spotifyAccessToken,
-    }).json
-    user = userData.id
-    serializer = UserDataSerializer(user, many=True)
+    }).json()
+    data = {
+        'spotifyId' : userData.get('id'),
+        'displayName' : userData.get('display_name'),
+        'profilePic' : userData.get('images')[0].get('url')
+    }
+    print(data)
+    serializer = UserDataSerializer(data)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -86,3 +94,4 @@ def getTokens(request):
     # tokens = SpotifyToken(user=session_id, access_token=access_token, 
     #                             refresh_token=10, token_type=token_type, expires_in=expires_in)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
+

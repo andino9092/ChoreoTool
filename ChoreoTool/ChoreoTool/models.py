@@ -13,6 +13,8 @@ class SpotifyToken(models.Model):
 
 class UserData(models.Model):
     spotifyId = models.CharField(max_length=64)
+    displayName = models.CharField(max_length=50, null=True)
+    profilePic = models.CharField(max_length=200, null=True)
 
 class Formations(models.Model):
     formations = ArrayField(

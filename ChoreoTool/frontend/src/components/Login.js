@@ -1,36 +1,42 @@
 import React, { useState, useEffect} from "react";
 
-export default function Login(){
+export default function Login(props){
 
-    const [isLoggedIn, logIn] = useState(false);
+    const [isLoggedIn, logIn] = useState(JSON.parse(window.localStorage.getItem('isLoggedIn') || false));
     const [data, setData] = useState();
     const [hover, toggle] = useState(false);
 
-    useEffect(() => {
-        logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
-      }, []);
-    
-      useEffect(() => {
-        window.localStorage.setItem('isLoggedIn', isLoggedIn);
-      }, [isLoggedIn]);
 
-    const handleLogin = () => {
+    useEffect(() => {
         fetch("/choreoTool/isAuthenticated")
             .then((response) => response.json())
             .then((data) => {
                 logIn(data.status);
                 toggle(false);
-                if (!data.status){
-                    fetch("/choreoTool/authorize")
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log(data)
-                            window.location.replace(data.url);
-                            console.log(data)
-                        })
-                }
+                props.onLogIn(data.status);
+                console.log(isLoggedIn);
             });
-      };
+      }, [isLoggedIn]);
+      
+    useEffect(() => {
+        logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
+    }, []);
+    
+    useEffect(() => {
+        window.localStorage.setItem('isLoggedIn', isLoggedIn);
+    }, [isLoggedIn]);
+
+    const handleLogin = () => {
+        if (!isLoggedIn){
+            fetch("/choreoTool/authorize")
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data)
+                    window.location.replace(data.url);
+                    console.log(data)
+                })
+        }
+    }
 
     const btn = {
         borderRadius: "40px",

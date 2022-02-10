@@ -23,6 +23,7 @@
     color: white;
     font-family: "Circular Std";
     font-weight: lighter;
+    height: 100%;
 }
 
 
@@ -40,4 +41,26 @@ a:hover{
     color: white;
     text-decoration: none;
     cursor: pointer;
+}
+
+.pfp{
+    width: 100px;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.rounded{
+    display: inline;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+}
+
+html{
+    height:1000px;
+}
+body, div{
+    height: 100%;
 }
