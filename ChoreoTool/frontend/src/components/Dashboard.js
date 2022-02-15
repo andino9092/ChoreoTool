@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Grid, Box, Avatar, Typography} from "@mui/material";
 
 export default function Dashboard(props){
 
-    const [data, setData] = useState();
+    const [formations, setFormations] = useState();
     const [displayName, setDisplayName] = useState("");
     const [src, setSrc] = useState("");
     const history = useNavigate();
@@ -12,7 +12,7 @@ export default function Dashboard(props){
         if (!props.status){
             history("/");
         }
-        if (!data){
+        if (!displayName){
             await getData();
         }
     })
@@ -21,19 +21,33 @@ export default function Dashboard(props){
         fetch("choreoTool/getUsers")
             .then(response => response.json())
             .then(data => {
-
-                setData(data.data);
                 setDisplayName(data.data.displayName);
                 setSrc(data.data.profilePic);
             })
+        fetch("choreoTool/getFormations")
+            .then(response => response.json())
+            .then(data => {
+                setFormations(data);
+            })
     }
     return(
-        <div>
-            <div className="pfp">
-                <img src={src} className="rounded"></img>
-            </div>
-            
-            {displayName}
-        </div>
+        <Box sx={{width:'100%', }}>
+            <Box sx={{my:3, mx: 2}}>
+                <Grid container direction={"row"} alignItems="center">
+                    <Grid item>
+                        <Avatar src={src} sx={{ width: 200, height: 200 }}/> 
+                    </Grid>
+                    <Grid item xs={10} >
+                        <div className="heading">
+                            PROFILE
+                        </div>
+                        <div className="name">
+                            {displayName}
+                        </div>
+                    </Grid>
+                </Grid>
+                
+            </Box>
+        </Box>
     )
 }

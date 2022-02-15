@@ -22,15 +22,23 @@ export default function App() {
   console.log(isLoggedIn);
   return (
     <div className="spotify">
-      <Router >
-      <Navbar onLogIn={handleFirstPage}/>
-      <Routes>
-        <Route path="/" element={isLoggedIn ? <Navigate replace to="dashboard"/> : <Navigate replace to="infoPage"/>}/>
-        <Route path="/infoPage" element={<InfoPage status={isLoggedIn}/>}/>
-        <Route path="/dashboard" element={<Dashboard status={isLoggedIn}/>}/>
-        <Route path="/create" element={<CreateFormationSlide/>}/>
-      </Routes>
-    </Router>
+        <Router>
+          <Navbar onLogIn={handleFirstPage}/>
+          <Routes>
+            <Route path="/" element={isLoggedIn ? <Navigate replace to="dashboard"/> : <Navigate replace to="infoPage"/>}/>
+            <Route path="/infoPage" element={<InfoPage status={isLoggedIn}/>}/>
+            <Route path="/dashboard" element={<Dashboard status={isLoggedIn}/>}/>
+            <Route path="/create" element={<CreateFormationSlide/>}/>
+          </Routes>
+          <div className="footer">
+            <ul className="icons">
+              {/* Add links */}
+               <li className="icons"><a><i className="fa fa-github"></i></a></li>
+               <li className="icons"><a><i className="fa fa-linkedin"></i></a></li>
+               <li className="icons"><a><i className="fa fa-spotify"></i></a></li>
+            </ul>
+          </div>
+      </Router>
     </div>
   )
 }

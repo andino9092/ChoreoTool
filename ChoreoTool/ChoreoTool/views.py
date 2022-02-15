@@ -1,5 +1,6 @@
 from email.policy import HTTP
 from lib2to3.pgen2 import token
+from tkinter.tix import Form
 from requests import Request, post, get
 from django.shortcuts import redirect, render
 from .serializers import SpotifyTokenSerializer, UserDataSerializer
@@ -9,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from dotenv import load_dotenv
 from .util import get_user_tokens, update_or_create_user_tokens, is_spotify_authenticated
-from .models import SpotifyToken, UserData
+from .models import SpotifyToken, UserData, Formations
 import os
 
 load_dotenv()
@@ -83,7 +84,6 @@ def getUsers(request):
         'displayName' : userData.get('display_name'),
         'profilePic' : userData.get('images')[0].get('url')
     }
-    print(data)
     serializer = UserDataSerializer(data)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
@@ -95,3 +95,11 @@ def getTokens(request):
     #                             refresh_token=10, token_type=token_type, expires_in=expires_in)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
+@api_view(['GET'])
+def getFormations(request):
+    if request.method == 'GET':
+        user = UserData.objects.filter(spotifyId="t5v8mrhmyr4azxtbfwc872xrv")
+        formations = Formations.objects.filter(user=user)
+        if formations:
+            return Response({'data':formations}, status.HTTP_200_OK)
+        return Response({'data':0}, status.HTTP_200_OK)

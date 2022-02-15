@@ -8,4 +8,5 @@ urlpatterns = [
     path('isAuthenticated/', views.IsAuthenticated),
     path('getUsers/', views.getUsers),
     path('getTokens/', views.getTokens),
+    path('getFormations/', views.getFormations),
 ]

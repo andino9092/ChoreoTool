@@ -3,9 +3,22 @@ import React, { useState, useEffect} from "react";
 export default function Login(props){
 
     const [isLoggedIn, logIn] = useState(JSON.parse(window.localStorage.getItem('isLoggedIn') || false));
-    const [data, setData] = useState();
+    const [displayName, setDisplayName] = useState();
     const [hover, toggle] = useState(false);
 
+    useEffect(async() => {
+        if (!displayName){
+            await getData();
+        }
+    })
+    
+    const getData = async () => {
+        fetch("choreoTool/getUsers")
+            .then(response => response.json())
+            .then(data => {
+                setDisplayName(data.data.displayName);
+            })
+    }
 
     useEffect(() => {
         fetch("/choreoTool/isAuthenticated")
@@ -58,12 +71,9 @@ export default function Login(props){
     }
 
     return (
-        <div className="nav-link" style={isLoggedIn ? {} : btn} onMouseEnter={handleHover} onMouseLeave={handleHover}>
-            {isLoggedIn ? "{UserName}" : 
-                <a className="" onClick={handleLogin}>
-                    Log In 
-                </a>
-            }
+        <div>
+            {isLoggedIn ? <div className="nav-link">{displayName}</div> : <div className="nav-link" style={btn} onMouseEnter={handleHover}
+            onMouseLeave={handleHover} onClick={handleLogin}>Log In</div>}
         </div>
     )
 }
