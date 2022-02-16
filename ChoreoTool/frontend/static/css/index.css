@@ -107,6 +107,7 @@ body, div{
     width: 200px;
     display: block;
     margin: 0 auto;
+    padding-bottom: 20px;
 }
 
 ul.icons{
@@ -128,4 +129,9 @@ ul.icons{
     font-size: 50px;
     word-spacing: 2px;
     letter-spacing: -2px;
+}
+
+.noForms{
+    background-color: grey;
+    color: #515050;
 }

@@ -42,3 +42,6 @@ export default function App() {
     </div>
   )
 }
+
+
+// Look into hot reloading

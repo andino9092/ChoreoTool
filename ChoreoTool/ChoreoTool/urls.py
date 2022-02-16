@@ -9,4 +9,6 @@ urlpatterns = [
     path('getUsers/', views.getUsers),
     path('getTokens/', views.getTokens),
     path('getFormations/', views.getFormations),
+    path('getAllUsers/', views.getAllUsers),
+    path('test', views.test),
 ]

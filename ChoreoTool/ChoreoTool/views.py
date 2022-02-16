@@ -1,5 +1,6 @@
 from email.policy import HTTP
 from lib2to3.pgen2 import token
+import profile
 from tkinter.tix import Form
 from requests import Request, post, get
 from django.shortcuts import redirect, render
@@ -80,11 +81,26 @@ def getUsers(request):
         'Authorization': 'Bearer ' + spotifyAccessToken,
     }).json()
     data = {
+        'user': request.session.session_key,
         'spotifyId' : userData.get('id'),
         'displayName' : userData.get('display_name'),
         'profilePic' : userData.get('images')[0].get('url')
     }
-    serializer = UserDataSerializer(data)
+    user = UserData.objects.filter(spotifyId=data['spotifyId'])
+    if len(user) < 1:
+        user = UserData(user=data['user'], spotifyId=data['spotifyId'], displayName=data['displayName'], profilePic=data['profilePic'])
+        user.save()
+    else:
+        user[0].user = request.session.session_key
+        user[0].save(update_fields=['user'])
+    serializer = UserDataSerializer(user[0])
+    return Response({'data':serializer.data}, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getAllUsers(request):
+    data = UserData.objects.all()
+    serializer = UserDataSerializer(data, many=True)
+    print(data)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -98,8 +114,14 @@ def getTokens(request):
 @api_view(['GET'])
 def getFormations(request):
     if request.method == 'GET':
-        user = UserData.objects.filter(spotifyId="t5v8mrhmyr4azxtbfwc872xrv")
-        formations = Formations.objects.filter(user=user)
+        print(request.session.session_key)
+        user__in = UserData.objects.get(user=request.session.session_key)
+        print(user__in)
+        formations = Formations.objects.filter(user=user__in)
         if formations:
             return Response({'data':formations}, status.HTTP_200_OK)
         return Response({'data':0}, status.HTTP_200_OK)
+
+@api_view(['GET'])
+def test(request):
+    return Response({'data':'done'}, status.HTTP_200_OK)

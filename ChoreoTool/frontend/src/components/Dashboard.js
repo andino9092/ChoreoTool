@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid, Box, Avatar, Typography} from "@mui/material";
+import { Grid, Box, Avatar, Divider, Paper} from "@mui/material";
+import { textAlign, createTheme, palette} from "@mui/system";
 
 export default function Dashboard(props){
 
@@ -27,9 +28,11 @@ export default function Dashboard(props){
         fetch("choreoTool/getFormations")
             .then(response => response.json())
             .then(data => {
-                setFormations(data);
+                setFormations(data.data);
+                console.log(formations)
             })
     }
+
     return(
         <Box sx={{width:'100%', }}>
             <Box sx={{my:3, mx: 2}}>
@@ -47,6 +50,24 @@ export default function Dashboard(props){
                     </Grid>
                 </Grid>
                 
+            </Box>
+            <Box sx={{my:3, mx:2, height:400}}>
+                <Grid container direction={"row"} alignItems="center" justifyContent="center">
+                    <Grid item xs={4}>
+                        <Paper>
+                            {formations == 0 ? 
+                            <Box sx={{
+                                fontSize: 40,
+                                margin: "0 auto",
+                                textAlign: "center",
+                                
+                            }} bgcolor="#2C2A2A" color="#515050" className="noForm">
+                                No Formations
+                            </Box> : ""}
+                        </Paper>
+                        
+                    </Grid>
+                </Grid>
             </Box>
         </Box>
     )

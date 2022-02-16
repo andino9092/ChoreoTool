@@ -9,4 +9,9 @@ class SpotifyTokenSerializer(serializers.ModelSerializer):
 class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserData
-        fields = ('spotifyId', 'displayName', 'profilePic')
+        fields = ('user', 'spotifyId', 'displayName', 'profilePic')
+
+class FormationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Formations
+        fields = ('formations', 'user')

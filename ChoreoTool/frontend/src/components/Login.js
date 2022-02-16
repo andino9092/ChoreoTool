@@ -31,13 +31,13 @@ export default function Login(props){
             });
       }, [isLoggedIn]);
       
-    useEffect(() => {
-        logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
-    }, []);
+    // useEffect(() => {
+    //     logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
+    // }, []);
     
-    useEffect(() => {
-        window.localStorage.setItem('isLoggedIn', isLoggedIn);
-    }, [isLoggedIn]);
+    // useEffect(() => {
+    //     window.localStorage.setItem('isLoggedIn', isLoggedIn);
+    // }, [isLoggedIn]);
 
     const handleLogin = () => {
         if (!isLoggedIn){

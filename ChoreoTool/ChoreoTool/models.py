@@ -12,6 +12,7 @@ class SpotifyToken(models.Model):
     token_type = models.CharField(max_length=50)
 
 class UserData(models.Model):
+    user = models.CharField(max_length=50, unique=True)
     spotifyId = models.CharField(max_length=64)
     displayName = models.CharField(max_length=50, null=True)
     profilePic = models.CharField(max_length=200, null=True)
