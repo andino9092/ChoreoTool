@@ -30,6 +30,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@mui/material": "^5.4.1",
+    "react-draggable": "^4.4.4",
     "react-router-dom": "^6.2.1"
   }
 }

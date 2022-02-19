@@ -18,15 +18,16 @@ class UserData(models.Model):
     profilePic = models.CharField(max_length=200, null=True)
 
 class Formations(models.Model):
-    formations = ArrayField(
-        ArrayField(
-            ArrayField(
-                models.IntegerField(),
-                size = 2,
-            )
-        )
-    )
+    formations = models.CharField(max_length=200)
     user = models.ForeignKey(
         UserData,
         on_delete=models.CASCADE,
+    )
+
+class Test(models.Model):
+    formations = ArrayField(
+        ArrayField(
+            models.IntegerField(),
+            size=2
+        )
     )

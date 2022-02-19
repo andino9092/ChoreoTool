@@ -4,7 +4,7 @@ import profile
 from tkinter.tix import Form
 from requests import Request, post, get
 from django.shortcuts import redirect, render
-from .serializers import SpotifyTokenSerializer, UserDataSerializer
+from .serializers import FormationsSerializer, SpotifyTokenSerializer, UserDataSerializer
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -111,17 +111,25 @@ def getTokens(request):
     #                             refresh_token=10, token_type=token_type, expires_in=expires_in)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
-@api_view(['GET'])
-def getFormations(request):
+@api_view(['GET', 'POST'])
+def formations(request):
+    user__in = UserData.objects.get(user=request.session.session_key)
     if request.method == 'GET':
         print(request.session.session_key)
-        user__in = UserData.objects.get(user=request.session.session_key)
         print(user__in)
         formations = Formations.objects.filter(user=user__in)
         if formations:
             return Response({'data':formations}, status.HTTP_200_OK)
         return Response({'data':0}, status.HTTP_200_OK)
+    elif request.method == 'POST':
+        formation = Formations(formations=request.data, user=user__in)
+        formation.save()
+        print(formation)
+        return Response({'data': request.data})
+        
 
 @api_view(['GET'])
 def test(request):
-    return Response({'data':'done'}, status.HTTP_200_OK)
+    formations = Formations.objects.all()
+    serializer = FormationsSerializer(formations, many=True)
+    return Response(serializer.data, status.HTTP_200_OK)

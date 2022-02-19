@@ -25,7 +25,7 @@ export default function Dashboard(props){
                 setDisplayName(data.data.displayName);
                 setSrc(data.data.profilePic);
             })
-        fetch("choreoTool/getFormations")
+        fetch("choreoTool/formations")
             .then(response => response.json())
             .then(data => {
                 setFormations(data.data);
