@@ -1,18 +1,16 @@
 import { height } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
-import Draggable from "react-draggable"
+import {Stage, Shape, Layer, Circle} from "react-konva"
+import { SwipeableDrawer } from "@mui/material";
 
 export default function Canvas(props){
 
-    const [personHover, setHover] = useState(false);
-    const [numPeople, setPeople] = useState(0);
-
-    const canvasRef = useRef();
     const verticalSections = 5;
     const horizontalSections = 8;
     const cWidth = 1000;
     const cHeight = 600;
     
+    // Have a scale version that opens a page that allows you to see everything
     
     const stage = {
         backgroundColor: "#2e2c2c",
@@ -26,49 +24,22 @@ export default function Canvas(props){
         width: "20px",
         display: "inline-block",
         borderRadius: "50%",
-        backgroundColor: "rgb(0, 153, 235)",
-        border: personHover ? "2px solid black" : "",
-    }
-
-    const draw = ctx =>{
-        for (var i = 0; i <= 8; i++){
-            ctx.beginPath();
-            ctx.moveTo(cWidth / horizontalSections * i, 0);
-            ctx.lineTo(cWidth/ horizontalSections * i, cHeight);
-            ctx.stroke();
-        }
-        for (var i = 0; i <= 5; i++){
-            ctx.beginPath();
-            ctx.moveTo(0, cHeight/ verticalSections * i);
-            ctx.lineTo(cWidth, cHeight/ verticalSections * i);
-            ctx.stroke();
-        }
-    }
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        canvas.width = cWidth;
-        canvas.height = cHeight;
-        context.fillStyle = '#black'
-
-        draw(context);
-    }, [draw])
-
-    const createPerson = () => {
-        setPeople(numPeople + 1);
-        console.log(numPeople);
-    }
-
-    const handleHover = () => {
-        setHover(!personHover)
+        backgroundColor: "green",
+        // border: personHover ? "2px solid black" : "",
     }
 
     const renderPeople = () => {
         console.log("rendered");
-        return [...Array(numPeople)].map((n) => <Draggable>
-            <div style={person}></div>
-        </Draggable>)
+        return [...Array(2)].map((n) => 
+            <Circle 
+                draggable 
+                radius={10} 
+                fill="green" 
+                x={200} y={200} 
+                
+                >
+                
+            </Circle>)
     }
 
     const people = renderPeople();
@@ -76,13 +47,56 @@ export default function Canvas(props){
     return (
         <div>
             <h1 style={{display: "block", margin:"0 auto", textAlign:"center"}}>Title</h1>
-            <Draggable onStart={() => false}>
-                    <div style={person} onMouseEnter={handleHover} onMouseLeave={handleHover} onClick={createPerson}></div>
-            </Draggable>
-            {people}
-            <canvas ref={canvasRef} style={stage}>
-                
-            </canvas>
+            <Stage width={cWidth} height ={cHeight}>
+                <Layer>
+                    <Shape sceneFunc={(context, shape) => {
+                        context.beginPath();
+                        context.moveTo(0, 0);
+                        context.lineTo(1000, 0);
+                        context.lineTo(1000, 1000);
+                        context.lineTo(0, 1000);
+                        context.lineTo(0, 0);
+                        context.closePath();
+                        context.fillStrokeShape(shape);
+                    }}
+                    fill="#2e2c2c"
+                    />
+                    <Shape sceneFunc={(context, shape) => {
+                        context.beginPath();
+                        for (var i = 0; i <= 8; i++){
+                            context.moveTo(cWidth / horizontalSections * i, 0);
+                            context.lineTo(cWidth/ horizontalSections * i, cHeight);
+                            context.stroke();
+                        }
+                        for (var i = 0; i <= 5; i++){
+                            context.moveTo(0, cHeight/ verticalSections * i);
+                            context.lineTo(cWidth, cHeight/ verticalSections * i);
+                            context.stroke();
+                        }
+                        context.closePath();
+                        context.moveTo(0, 0);
+                        
+                        context.fillStrokeShape(shape);
+                    }}
+                    />
+                </Layer>
+                <Layer>
+                    {people}
+                </Layer>
+            </Stage>
+            <SwipeableDrawer
+                // container={container}
+                anchor="bottom"
+                // open={open}
+                // onClose={toggleDrawer(false)}
+                // onOpen={toggleDrawer(true)}
+                // swipeAreaWidth={drawerBleeding}
+                disableSwipeToOpen={false}
+                ModalProps={{
+                    keepMounted: true,
+                }}>
+
+            </SwipeableDrawer>
         </div>
     )
 }
