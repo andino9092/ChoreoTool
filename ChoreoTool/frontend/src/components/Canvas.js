@@ -39,7 +39,7 @@ export default function Canvas(props){
                 radius={10} 
                 fill="green" 
                 x={200} y={200} 
-                strokeWidth={hover ? 4: 0}
+                strokeWidth={hover ? 2: 0}
                 stroke="black"
                 onMouseEnter={handleHover}
                 onMouseLeave={handleHover}
