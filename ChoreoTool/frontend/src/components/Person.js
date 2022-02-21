@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import { Circle } from "react-konva";
 
 export default function Person(props){
+    const [id, setId] = useState(props.key);
     const [x, setX] = useState(props.x);
     const [y, setY] = useState(props.y);
     const [hover, toggleHover] = useState(false);
@@ -16,7 +17,7 @@ export default function Person(props){
                 draggable 
                 radius={10} 
                 fill="green" 
-                x={200} y={200} 
+                x={x} y={y} 
                 strokeWidth={hover ? 2: 0}
                 stroke="black"
                 onMouseEnter={handleHover}

@@ -57,10 +57,6 @@ a:hover{
     width: auto;
 }
 
-body, div{
-    height: 100%;
-}
-
 .nav-link{
     padding-top: 5px;
     padding-bottom: 5px;
@@ -139,4 +135,8 @@ ul.icons{
 .konvajs-content{
     margin: 0 auto;
     display: block;
+}
+
+.MuiFormControl-root.MuiTextField-root{
+    color: white;
 }

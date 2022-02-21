@@ -27,14 +27,18 @@ export default function CreateFormationSlide(props){
 
     return(
         <div>
-            <Box sx={{my: 5}}>
-                <Grid alignItems='center' justifyContent="center">
-                    <Grid item>
-                       <Canvas/> 
-                    </Grid>
-                </Grid>
+            <Box sx={{my: 2, mx: 2}}>
+                <div style={{display:"flex", justifyContent: "right", marginRight:"25%"}}>
+                    <Button onClick={saveFormation}>Save</Button>
+                </div>
             </Box>
-            <Button onClick={saveFormation}>Save</Button>
+            
+            
+            <Canvas/> 
+                    
+                
+         
+            
         </div>
     )
 
