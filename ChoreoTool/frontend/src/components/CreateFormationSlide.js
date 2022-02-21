@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from "react";
 import { Button, Box, Grid } from "@mui/material";
 import Canvas from "./Canvas";
+import StyledButton from "./StyledButton";
 
 export default function CreateFormationSlide(props){
 
+    // Song informaiton and lyrics(maybe) might be here
 
     const saveFormation = () => {
         fetch("choreoTool/formations/", {
@@ -27,11 +29,7 @@ export default function CreateFormationSlide(props){
 
     return(
         <div>
-            <Box sx={{my: 2, mx: 2}}>
-                <div style={{display:"flex", justifyContent: "right", marginRight:"25%"}}>
-                    <Button onClick={saveFormation}>Save</Button>
-                </div>
-            </Box>
+            
             
             
             <Canvas/> 

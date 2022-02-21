@@ -1,31 +1,56 @@
-import { height } from "@mui/system";
+import { height, textAlign } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import {Stage, Shape, Layer, Circle} from "react-konva"
 import { Button, FormLabel, Drawer, TextField, Box, Divider, Grid} from "@mui/material";
 import Person from "./Person";
 import { withStyles } from "@mui/styles";
-import Test from "./Testing";
+import StyledText from "./StyledText";
+import StyledButton from "./StyledButton";
+import {styled} from "@mui/material/styles"
 
 const styles = {
     paper: {
       background: "#1E1C1C",
       width: "250px",
     },
-    input: {
+  };
+
+const TitleStyle = styled(TextField)(({
+    
+    '& label.Mui-focused':{
         color: "white",
     },
-    root: {
-        '&$disabled $notchedOutline':{
-            borderColor: "white",
-        }
+
+    '& label':{
+        color: "white",
     },
-    disabled: {},
-    notchedOutline: {},
-    cssBorder: {
-        borderColor: "white",
+
+    '& .MuiInputBase-formControl':{
+
+        borderBottom: "None",
+
+        
+        '& .MuiInputBase-input': {
+            color: "white",
+            textAlign: "center",
+            fontSize: "40px",
+            letterSpacing: "4px",
+        },
+        '&::before':{
+            borderBottom: "None",
+        },
+        '&::after':{
+            borderBottom: "white solid 2px",
+        }
+      
+
+    },
+    '&.MuiTextField-root':{
+        display: "block",
+        alignItems: "center",
+        textAlign: "center",
     }
-    
-  };
+}))
 
 function Canvas(props){
 
@@ -34,6 +59,9 @@ function Canvas(props){
     const [numPeople, setPeople] = useState(0);
     const [locations, setLocations] = useState([]);
     const [drawerOpen, toggleDrawer] = useState(false);
+    const [rowText, setRow] = useState("");
+    const [colText, setCol] = useState("");
+    const [title, setTitle] = useState("");
 
     const verticalSections = 5;
     const horizontalSections = 8;
@@ -46,6 +74,8 @@ function Canvas(props){
     // Musix Match for lyrics
     // Find fix for not beign able to close after clicking backdrop
     // Stage Front label
+    // Add error handling for text fields
+    // Add await and async functions to Login button
 
     const renderPeople = () => {
         console.log(locations[0]);
@@ -58,12 +88,29 @@ function Canvas(props){
 
     const addPerson = async (e) => {
         e.preventDefault();
-        const x = e.target.x.value ? e.target.x.value * column: 500;
-        const y = e.target.y.value ? (verticalSections - e.target.y.value) * row : 300;
+        const x = colText ? colText * column: 500;
+        const y = rowText ? (verticalSections - rowText) * row : 300;
         const arr = [x, y];
         console.log(arr);
         const wait = await waitLocations(arr);
         setPeople(numPeople + 1);
+        console.log(locations);
+    }
+
+    const handleTextField = (e) => {
+        console.log(e.target.name);
+        if (e.target.name == "y"){
+            setRow(e.target.value);
+        }
+        else if (e.target.name == "title"){
+            setTitle(e.target.value);
+        }
+        else{
+            setCol(e.target.value);
+        }
+    }
+
+    const convertData = () => {
         console.log(locations);
     }
 
@@ -76,125 +123,105 @@ function Canvas(props){
         console.log(!drawerOpen);
     }
 
+    const checkInput = (text) => {
+
+    }
+
     return (
         <div>
-            <Test x="x"></Test>
-            <h1 style={{display: "block", margin:"0 auto", textAlign:"center", paddingBottom:"10px"}}>Title</h1>
-            <div style={{display:"block", margin:"0 auto"}}>
-                <Stage width={cWidth} height ={cHeight}>
-                    <Layer>
-                        <Shape sceneFunc={(context, shape) => {
-                            context.beginPath();
-                            context.moveTo(0, 0);
-                            context.lineTo(1000, 0);
-                            context.lineTo(1000, 1000);
-                            context.lineTo(0, 1000);
-                            context.lineTo(0, 0);
-                            context.closePath();
-                            context.fillStrokeShape(shape);
-                        }}
-                        fill="#2e2c2c"
-                        />
-                        <Shape sceneFunc={(context, shape) => {
-                            context.beginPath();
-                            for (var i = 0; i <= 8; i++){
-                                context.moveTo(cWidth / horizontalSections * i, 0);
-                                context.lineTo(cWidth/ horizontalSections * i, cHeight);
-                                context.stroke();
-                            }
-                            for (var i = 0; i <= 5; i++){
-                                context.moveTo(0, cHeight/ verticalSections * i);
-                                context.lineTo(cWidth, cHeight/ verticalSections * i);
-                                context.stroke();
-                            }
-                            context.closePath();
-                            context.moveTo(0, 0);
-                            
-                            context.fillStrokeShape(shape);
-                        }}
-                        />
-                    </Layer>
-                    <Layer>
-                        {people}
-                    </Layer>
-                </Stage>
-            </div>
-            <Box sx={{my:3, mx: 2}}>
-                <Button onClick={handleDrawer} style={{backgroundColor:"green", color:"black", display:"block", margin:"0 auto"}}>
-                    Tools
-                </Button>
+            <Box sx={{my: 2, mx: 2}}>
+                <div style={{display:"flex", justifyContent: "right", marginRight:"10%"}}>
+                    <StyledButton onClick={convertData} text="Save" width="10%"></StyledButton>
+                </div>
             </Box>
-            <Drawer
-                sx={{
-                    width: 240,
-                    backgroundColor: "black",
-                    color: "black"
-                }}
-                classes={
-                    {paper: classes.paper}
-                }
-                style={{backgroundColor:"black"}}
-                anchor="right"
-                open={drawerOpen}
-                onClose={handleDrawer}
-                onOpen={handleDrawer}
-                variant="persistent">
-                <Box>
-                    <Box sx={{height:"50px"}}>
-                        <h1 style={{color:"white", display:"block", margin:"0 auto", textAlign:"center",}}>Tools</h1>
-                    </Box>
-                    <Divider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>CREATE MARKER</Divider>
-                    <Box sx={{height:"150px"}}>
-                        <form onSubmit={addPerson}>    
-                            <Box sx={{my: 2, mx: 1, alignItems:"center"}}>
-                                <Grid container direction={"row"} alignItems="center" justifyContent="center">
-                                    <TextField 
-                                        InputProps={{
-                                            classes:{
-                                                root: classes.input,
-                                                notchedOutline: classes.cssBorder,
-                                                focused: classes.cssBorder,
-                                                disabled: classes.cssBorder,
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            classes:{
-                                                root: classes.input,
-                                                notchedOutline: classes.cssBorder,
-                                                focused: classes.cssBorder,
-                                                disabled: classes.cssBorder,
-                                            },
-                                            className: classes.input,
-                                        }}
-                                        name="y" label="Row" sx={{color:"green", width:"75px", height:"50px", padding:"2px"}}/>
-                                    <TextField 
-                                        sx={{
-                                            '& MuiInputBase-input': {
-                                                borderColor: "white",
-                                            }
-
-                                        }}
-                                        
-                                         name="x" label="Col" sx={{width:"75px", height:"50px", padding:"2px"}}/>
-                                    
-                                </Grid>  
-                            </Box>
-                            <Grid container direction={"center"} alignItems="center" justifyContent="center">
-                                    <Button type="submit">
-                                        Create Person
-                                    </Button>
-                                </Grid>
-                        </form>
-                    </Box>
-                    <Box>
-                        <Button onClick={handleDrawer}>
-                            Close
-                        </Button>
-                    </Box>
+            <form>
+                <Box sx={{my: 2, mx: 1, alignItems:"center", justifyContent:"center"}}>
+                    <TitleStyle variant="standard" name="title" placeholder="Title" value={title} onChange={handleTextField}></TitleStyle>
                 </Box>
-                
-                
-            </Drawer>
+                <div style={{display:"block", margin:"0 auto"}}>
+                    <Stage width={cWidth} height ={cHeight}>
+                        <Layer>
+                            <Shape sceneFunc={(context, shape) => {
+                                context.beginPath();
+                                context.moveTo(0, 0);
+                                context.lineTo(1000, 0);
+                                context.lineTo(1000, 1000);
+                                context.lineTo(0, 1000);
+                                context.lineTo(0, 0);
+                                context.closePath();
+                                context.fillStrokeShape(shape);
+                            }}
+                            fill="#2e2c2c"
+                            />
+                            <Shape sceneFunc={(context, shape) => {
+                                context.beginPath();
+                                for (var i = 0; i <= 8; i++){
+                                    context.moveTo(cWidth / horizontalSections * i, 0);
+                                    context.lineTo(cWidth/ horizontalSections * i, cHeight);
+                                    context.stroke();
+                                }
+                                for (var i = 0; i <= 5; i++){
+                                    context.moveTo(0, cHeight/ verticalSections * i);
+                                    context.lineTo(cWidth, cHeight/ verticalSections * i);
+                                    context.stroke();
+                                }
+                                context.closePath();
+                                context.moveTo(0, 0);
+                                
+                                context.fillStrokeShape(shape);
+                            }}
+                            />
+                        </Layer>
+                        <Layer>
+                            {people}
+                        </Layer>
+                    </Stage>
+                </div>
+                <Box sx={{my:3, mx: 2}}>
+                    <StyledButton onClick={handleDrawer} width="5%" display="block" margin="0 auto" text="Tools"/>
+                    {/* <Button onClick={handleDrawer} style={{backgroundColor:"green", color:"black", display:"block", margin:"0 auto"}}>
+                        Tools
+                    </Button> */}
+                </Box>
+                <Drawer
+                    sx={{
+                        width: 240,
+                        backgroundColor: "black",
+                        color: "black"
+                    }}
+                    classes={
+                        {paper: classes.paper}
+                    }
+                    style={{backgroundColor:"black"}}
+                    anchor="right"
+                    open={drawerOpen}
+                    onClose={handleDrawer}
+                    onOpen={handleDrawer}
+                    variant="persistent">
+                    <Box>
+                        <Box sx={{height:"50px"}}>
+                            <h1 style={{color:"white", display:"block", margin:"0 auto", textAlign:"center",}}>Tools</h1>
+                        </Box>
+                        <Divider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>CREATE MARKER</Divider>
+                        <Box sx={{height:"150px"}}>   
+                                <Box sx={{my: 2, mx: 1, alignItems:"center"}}>
+                                    <Grid container direction={"row"} alignItems="center" justifyContent="center">
+                                        <StyledText value={rowText} onChange={handleTextField} name="y" label="Row" width="75px" height="50px" padding="2px"/>
+                                        <StyledText value={colText} onChange={handleTextField} name="x" label="Col" width="75px" height="50px" padding="2px"/>
+                                    </Grid>  
+                                </Box>
+                                <Grid container direction={"center"} alignItems="center" justifyContent="center">
+                                        <StyledButton text="Create Person" onClick={addPerson} style={{ display:"block", margin:"0 auto"}}/>
+                                </Grid>
+                        </Box>
+                        <Box>
+                            <StyledButton text="Close" onClick={handleDrawer} width="50%" display="block" margin="0 auto"/>
+                        </Box>
+                    </Box>
+                    
+                    
+                </Drawer>
+            </form>
         </div>
     )
 }
