@@ -1,7 +1,10 @@
 import { height, textAlign } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import {Stage, Shape, Layer, Circle} from "react-konva"
-import { Button, FormLabel, Drawer, TextField, Box, Divider, Grid} from "@mui/material";
+import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Person from "./Person";
 import { withStyles } from "@mui/styles";
 import StyledText from "./StyledText";
@@ -9,12 +12,57 @@ import StyledButton from "./StyledButton";
 import FormationPage from "./FormationPage";
 import {styled} from "@mui/material/styles"
 
+const StyledDialog = styled(Dialog)(({
+    '&.MuiDialog-root':{
+        '& .MuiDialog-scrollPaper':{
+            '& .MuiDialog-paperWidthSm':{
+                backgroundColor:"#1E1C1C",
+                color:"white",
+            }
+        }
+    }
+}))
+
+const StyledCheckbox = styled(Checkbox)(({
+    '&.PrivateSwitchBase-root':{
+        color:"green",
+        '&:hover':{
+            color:"white",
+        },
+        '&:focus':{
+            outline:"None",
+        }
+    }
+}))
+
+const StyledIcon = styled(IconButton)(({
+    '&.MuiIconButton-sizeMedium':{
+        '&:focus':{
+            outline:"None",
+        },
+        color:"white",
+        fontSize:"1rem",
+    }
+}))
+
+const StyledDivider = styled(Divider)(({
+    '&.MuiDivider-withChildren':{
+        '&::before':{
+            borderTop:"white solid 1px"
+        },
+        '&::after':{
+            borderTop:"white solid 1px"
+        }
+    }
+
+}))
+
 const StyledDrawer = styled(Drawer)(({
     '&.MuiDrawer-docked':{
         backgroundColor: "#1E1C1C",
         '& .MuiDrawer-paperAnchorDockedRight':{
             backgroundColor: "#1E1C1C",
-            width: "225px",
+            width: "250px",
         },
     }
 }))
@@ -65,12 +113,16 @@ function Canvas(props){
     const [locations, setLocations] = useState([]); // Current slide locations
     // If need th others, use all data
     const [pieceLocations, setPieceLocations] = useState([]);
+    const [titles, setTitles] = useState([]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
     const [title, setTitle] = useState("");
     const [currSlide, setCurrentSlide] = useState(0);
     const [numSlides, setNumSlides] = useState(1);
+    const [copyLast, setCopyLast] = useState(true);
+    const [dialogOpen, toggleDialogOpen] = useState(false);
+    const [disableBack, setDisableBack] = useState(true);
 
     const verticalSections = 5;
     const horizontalSections = 8;
@@ -88,6 +140,8 @@ function Canvas(props){
     // Have no internet state
     // Check to see if drawer doesnt close outside click because its in Canvas rather than CreateFormationSlide
     // Choosing slide 
+    // Add labels to people
+    //      Add custom colors and bind to holding down a key to show names
 
     const addPerson = async (e) => {
         e.preventDefault();
@@ -99,7 +153,6 @@ function Canvas(props){
     }
 
     const handleTextField = (e) => {
-        console.log(e.target.name);
         if (e.target.name == "y"){
             setRow(e.target.value);
         }
@@ -115,18 +168,23 @@ function Canvas(props){
     // This is only for 1 formation page
     const convertData = () => {
         var locs = locations.map((n) => "[" + n[0] + "," + n[1] + "]");
-        console.log(locs);
     }
 
     const waitLocations = async (arr) => {
         const wait = setLocations(locations => [...locations, arr]);
-        console.log(locations);
     }
 
     // Creating new slide
     const addFormations = async () => {
-        setPieceLocations(pieceLocations => [...pieceLocations.map, locations]);
-        setLocations([]);
+        setPieceLocations(pieceLocations => [...pieceLocations, locations]);
+        setTitles(titles => [...titles, title]);
+        setTitle("");
+        if (copyLast){
+            setLocations(locations);
+        }
+        else{
+            setLocations([]);
+        }
         setCurrentSlide(currSlide+1);
         setNumSlides(numSlides+1);
     }
@@ -135,7 +193,29 @@ function Canvas(props){
 
     const handleDrawer = () => {
         toggleDrawer(!drawerOpen);
-        console.log(!drawerOpen);
+    }
+
+    const goNext = () => {
+        if (currSlide + 1 >= numSlides){
+            toggleDialogOpen(!dialogOpen);
+        }
+        else{
+            setPieceLocations(pieceLocations.map((n, i) => {
+                i == currSlide ? locations : n
+            }))
+            console.log(pieceLocations);
+            setCurrentSlide(currSlide + 1);
+            setLocations(pieceLocations[currSlide]);
+            setDisableBack(false);
+        }
+    }
+
+    const goBack = () => {
+        if (currSlide - 1 == 0){
+            setDisableBack(true);
+        } 
+        setCurrentSlide(currSlide - 1);
+        setLocations(pieceLocations[currSlide - 1]);
     }
 
     return (
@@ -151,7 +231,6 @@ function Canvas(props){
                     <TitleStyle variant="standard" name="title" placeholder="Title" value={title} onChange={handleTextField}></TitleStyle>
                 </Box>
                 <div style={{display:"block", margin:"0 auto"}}>
-                    {console.log(locations)}
                     <FormationPage 
                         cWidth={cWidth} 
                         cHeight={cHeight}
@@ -160,15 +239,52 @@ function Canvas(props){
                         verticalSections={verticalSections}
                         />
                 </div>
-                <Box sx={{my:3, mx: 2}}>
-                    <StyledButton onClick={handleDrawer} width="5%" display="block" margin="0 auto" text="Tools"/>
-                    {/* <Button onClick={handleDrawer} style={{backgroundColor:"green", color:"black", display:"block", margin:"0 auto"}}>
-                        Tools
-                    </Button> */}
+                <Box sx={{my:3, mx: 2, alignItems:"center", justifyContent:"center"}}>
+                    <Grid container direction="column" alignItems="center" justifyContent="center">
+                        <Grid item>
+                            <StyledIcon onClick={goBack} disabled={disableBack} sx={{opacity: disableBack? "30%": "100%"}}><ArrowBackIcon></ArrowBackIcon></StyledIcon>
+                            <StyledButton onClick={handleDrawer} width="5%" margin="0 auto" text="Tools"/>
+                            <StyledIcon onClick={goNext}><ArrowForwardIcon></ArrowForwardIcon></StyledIcon>
+                            <StyledDialog open={dialogOpen}>
+                                <DialogTitle>
+                                    Create a new Slide?
+                                </DialogTitle>
+                                <Grid container direction="row">
+                                    <Grid item xs={6}>
+                                        <Box sx={{my:1, mx: 1, justifyContent:"center", textAlign:"center"}}>
+                                            <StyledButton onClick={() => {
+                                                toggleDialogOpen(!dialogOpen);
+                                                addFormations();
+                                                setDisableBack(false);
+                                                console.log(dialogOpen);
+                                            }}
+                                            text="Yes"    
+                                            width="75%"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Box sx={{my:1, mx: 1, justifyContent:"center", textAlign:"center"}}>
+                                            <StyledButton onClick={() => {
+                                                toggleDialogOpen(!dialogOpen);
+                                                setDisableBack(currSlide-1==0);
+                                            }}
+                                            text="No"
+                                            width="75%"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </StyledDialog>
+                        </Grid>
+                        <Grid item>
+                            {currSlide +1} / {numSlides}
+                        </Grid>
+                    </Grid>
                 </Box>
                 <StyledDrawer
                     anchor="right"
-                    open={drawerOpen}
+                    open={true}
                     onClose={handleDrawer}
                     onOpen={handleDrawer}
                     variant="persistent">
@@ -176,7 +292,7 @@ function Canvas(props){
                         <Box sx={{height:"50px"}}>
                             <h1 style={{color:"white", display:"block", margin:"0 auto", textAlign:"center",}}>Tools</h1>
                         </Box>
-                        <Divider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>CREATE MARKER</Divider>
+                        <StyledDivider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>CREATE MARKER</StyledDivider>
                         <Box sx={{height:"150px"}}>   
                                 <Box sx={{my: 2, mx: 1, alignItems:"center"}}>
                                     <Grid container direction={"row"} alignItems="center" justifyContent="center">
@@ -188,7 +304,14 @@ function Canvas(props){
                                         <StyledButton text="Create Person" onClick={addPerson} style={{ display:"block", margin:"0 auto"}}/>
                                 </Grid>
                         </Box>
-                        <Box>
+                        <StyledDivider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>NEW SLIDES</StyledDivider>
+                        <Box sx={{mx:2, my:1}}>
+                            <StyledIcon onClick={addFormations}><AddIcon sx={{color:"green"}}></AddIcon>Create New Slide</StyledIcon>
+                            <FormGroup sx={{color:"white"}}>
+                                <FormControlLabel control={<StyledCheckbox defaultChecked onClick={() => {setCopyLast(!copyLast);}} />} label="Copy from Last Slide" />
+                            </FormGroup>
+                        </Box>
+                        <Box sx={{my:2, mx: 1}}>
                             <StyledButton text="Close" onClick={handleDrawer} width="50%" display="block" margin="0 auto"/>
                         </Box>
                     </Box>

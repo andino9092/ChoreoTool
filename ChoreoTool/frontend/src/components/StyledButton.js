@@ -11,6 +11,9 @@ const Styled = styled(Button)(({
             backgroundColor: "white",
             transform: "scale(1.1)",
             transitionDuration: ".1s"
+        },
+        '&:focus':{
+            outline:"None",
         }
     }
 }))
