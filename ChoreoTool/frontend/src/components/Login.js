@@ -31,6 +31,7 @@ export default function Login(props){
             });
       }, [isLoggedIn]);
       
+    
     useEffect(() => {
         logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
     }, []);
@@ -64,6 +65,7 @@ export default function Login(props){
         paddingLeft: "40px",
         paddingRight: "40px",
     }
+
     const handleHover = () => {
         if (!isLoggedIn){
             toggle(!hover);

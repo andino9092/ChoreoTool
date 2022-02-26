@@ -5,7 +5,13 @@ import StyledButton from "./StyledButton";
 
 export default function CreateFormationSlide(props){
 
+    const [pages, setPages] = useState(0);
+
     // Song informaiton and lyrics(maybe) might be here
+
+    const getSlideData = () => {
+        
+    }
 
     const saveFormation = () => {
         fetch("choreoTool/formations/", {

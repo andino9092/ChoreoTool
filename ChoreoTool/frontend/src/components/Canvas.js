@@ -6,14 +6,18 @@ import Person from "./Person";
 import { withStyles } from "@mui/styles";
 import StyledText from "./StyledText";
 import StyledButton from "./StyledButton";
+import FormationPage from "./FormationPage";
 import {styled} from "@mui/material/styles"
 
-const styles = {
-    paper: {
-      background: "#1E1C1C",
-      width: "250px",
-    },
-  };
+const StyledDrawer = styled(Drawer)(({
+    '&.MuiDrawer-docked':{
+        backgroundColor: "#1E1C1C",
+        '& .MuiDrawer-paperAnchorDockedRight':{
+            backgroundColor: "#1E1C1C",
+            width: "225px",
+        },
+    }
+}))
 
 const TitleStyle = styled(TextField)(({
     
@@ -57,16 +61,21 @@ function Canvas(props){
     const {classes} = props;
 
     const [numPeople, setPeople] = useState(0);
-    const [locations, setLocations] = useState([]);
+    const [pages, setPages] = useState(0);
+    const [locations, setLocations] = useState([]); // Current slide locations
+    // If need th others, use all data
+    const [pieceLocations, setPieceLocations] = useState([]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
     const [title, setTitle] = useState("");
+    const [currSlide, setCurrentSlide] = useState(0);
+    const [numSlides, setNumSlides] = useState(1);
 
     const verticalSections = 5;
     const horizontalSections = 8;
-    const cWidth = 1000;
-    const cHeight = 600;
+    const cWidth = window.innerWidth/1.5;
+    const cHeight = window.innerHeight/1.5;
     const column = cWidth / horizontalSections;
     const row = cHeight / verticalSections;
 
@@ -76,25 +85,17 @@ function Canvas(props){
     // Stage Front label
     // Add error handling for text fields
     // Add await and async functions to Login button
-
-    const renderPeople = () => {
-        console.log(locations[0]);
-        return locations.map((n, index) => 
-            <Person key={index} x={n[0]} y={n[1]}></Person>
-        )
-    }
-
-    const people = renderPeople();
+    // Have no internet state
+    // Check to see if drawer doesnt close outside click because its in Canvas rather than CreateFormationSlide
+    // Choosing slide 
 
     const addPerson = async (e) => {
         e.preventDefault();
         const x = colText ? colText * column: 500;
         const y = rowText ? (verticalSections - rowText) * row : 300;
         const arr = [x, y];
-        console.log(arr);
         const wait = await waitLocations(arr);
         setPeople(numPeople + 1);
-        console.log(locations);
     }
 
     const handleTextField = (e) => {
@@ -110,25 +111,36 @@ function Canvas(props){
         }
     }
 
+    // error handler, if it is empty don't save
+    // This is only for 1 formation page
     const convertData = () => {
-        console.log(locations);
+        var locs = locations.map((n) => "[" + n[0] + "," + n[1] + "]");
+        console.log(locs);
     }
 
     const waitLocations = async (arr) => {
         const wait = setLocations(locations => [...locations, arr]);
+        console.log(locations);
     }
+
+    // Creating new slide
+    const addFormations = async () => {
+        setPieceLocations(pieceLocations => [...pieceLocations.map, locations]);
+        setLocations([]);
+        setCurrentSlide(currSlide+1);
+        setNumSlides(numSlides+1);
+    }
+
+    // One for choosing slide
 
     const handleDrawer = () => {
         toggleDrawer(!drawerOpen);
         console.log(!drawerOpen);
     }
 
-    const checkInput = (text) => {
-
-    }
-
     return (
         <div>
+            
             <Box sx={{my: 2, mx: 2}}>
                 <div style={{display:"flex", justifyContent: "right", marginRight:"10%"}}>
                     <StyledButton onClick={convertData} text="Save" width="10%"></StyledButton>
@@ -139,43 +151,14 @@ function Canvas(props){
                     <TitleStyle variant="standard" name="title" placeholder="Title" value={title} onChange={handleTextField}></TitleStyle>
                 </Box>
                 <div style={{display:"block", margin:"0 auto"}}>
-                    <Stage width={cWidth} height ={cHeight}>
-                        <Layer>
-                            <Shape sceneFunc={(context, shape) => {
-                                context.beginPath();
-                                context.moveTo(0, 0);
-                                context.lineTo(1000, 0);
-                                context.lineTo(1000, 1000);
-                                context.lineTo(0, 1000);
-                                context.lineTo(0, 0);
-                                context.closePath();
-                                context.fillStrokeShape(shape);
-                            }}
-                            fill="#2e2c2c"
-                            />
-                            <Shape sceneFunc={(context, shape) => {
-                                context.beginPath();
-                                for (var i = 0; i <= 8; i++){
-                                    context.moveTo(cWidth / horizontalSections * i, 0);
-                                    context.lineTo(cWidth/ horizontalSections * i, cHeight);
-                                    context.stroke();
-                                }
-                                for (var i = 0; i <= 5; i++){
-                                    context.moveTo(0, cHeight/ verticalSections * i);
-                                    context.lineTo(cWidth, cHeight/ verticalSections * i);
-                                    context.stroke();
-                                }
-                                context.closePath();
-                                context.moveTo(0, 0);
-                                
-                                context.fillStrokeShape(shape);
-                            }}
-                            />
-                        </Layer>
-                        <Layer>
-                            {people}
-                        </Layer>
-                    </Stage>
+                    {console.log(locations)}
+                    <FormationPage 
+                        cWidth={cWidth} 
+                        cHeight={cHeight}
+                        locations={locations}
+                        horizontalSections={horizontalSections}
+                        verticalSections={verticalSections}
+                        />
                 </div>
                 <Box sx={{my:3, mx: 2}}>
                     <StyledButton onClick={handleDrawer} width="5%" display="block" margin="0 auto" text="Tools"/>
@@ -183,16 +166,7 @@ function Canvas(props){
                         Tools
                     </Button> */}
                 </Box>
-                <Drawer
-                    sx={{
-                        width: 240,
-                        backgroundColor: "black",
-                        color: "black"
-                    }}
-                    classes={
-                        {paper: classes.paper}
-                    }
-                    style={{backgroundColor:"black"}}
+                <StyledDrawer
                     anchor="right"
                     open={drawerOpen}
                     onClose={handleDrawer}
@@ -218,12 +192,10 @@ function Canvas(props){
                             <StyledButton text="Close" onClick={handleDrawer} width="50%" display="block" margin="0 auto"/>
                         </Box>
                     </Box>
-                    
-                    
-                </Drawer>
+                </StyledDrawer>
             </form>
         </div>
     )
 }
 
-export default withStyles(styles)(Canvas);
+export default Canvas;

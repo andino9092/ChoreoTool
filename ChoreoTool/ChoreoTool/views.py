@@ -69,11 +69,15 @@ def spotifyCallback(request, format = None):
 def IsAuthenticated(request, format = None):
     print(request.session.session_key)
     is_authenticate = is_spotify_authenticated(request.session.session_key)
-    print(is_authenticate)
+    tokens = get_user_tokens(request.session.session_key)
+    if tokens:
+        expires = tokens.expires_in
+        return Response({'status': is_authenticate, 'expires':expires}, status.HTTP_200_OK)
     return Response({'status': is_authenticate}, status.HTTP_200_OK)
     
 @api_view(['GET'])
 def getUsers(request):
+    print(request.session.session_key)
     spotifyAccessToken = get_user_tokens(request.session.session_key).access_token
     userData = get("https://api.spotify.com/v1/me",headers={
         'Accept': 'application/json',
