@@ -112,7 +112,7 @@ function Canvas(props){
     const [pages, setPages] = useState(0);
     const [locations, setLocations] = useState([]); // Current slide locations
     // If need th others, use all data
-    const [pieceLocations, setPieceLocations] = useState([]);
+    const [pieceLocations, setPieceLocations] = useState([locations]);
     const [titles, setTitles] = useState([]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
@@ -148,7 +148,7 @@ function Canvas(props){
         const x = colText ? colText * column: 500;
         const y = rowText ? (verticalSections - rowText) * row : 300;
         const arr = [x, y];
-        const wait = await waitLocations(arr);
+        const wait = await setLocations(locations => [...locations, arr]);
         setPeople(numPeople + 1);
     }
 
@@ -170,23 +170,25 @@ function Canvas(props){
         var locs = locations.map((n) => "[" + n[0] + "," + n[1] + "]");
     }
 
-    const waitLocations = async (arr) => {
-        const wait = setLocations(locations => [...locations, arr]);
-    }
-
     // Creating new slide
     const addFormations = async () => {
-        setPieceLocations(pieceLocations => [...pieceLocations, locations]);
-        setTitles(titles => [...titles, title]);
-        setTitle("");
+        // if 1st slide ? then u just change it other wise, u add the location on
+        if (currSlide == 0){
+            await setPieceLocations([[locations]]);
+        }
+        else{
+            await setPieceLocations(pieceLocations => [...pieceLocations, locations]);
+        }
+        await setTitles(titles => [...titles, title]);
+        await setTitle("");
         if (copyLast){
             setLocations(locations);
         }
         else{
             setLocations([]);
         }
-        setCurrentSlide(currSlide+1);
-        setNumSlides(numSlides+1);
+        await setCurrentSlide(currSlide+1);
+        await setNumSlides(numSlides+1);
     }
 
     // One for choosing slide
@@ -195,27 +197,45 @@ function Canvas(props){
         toggleDrawer(!drawerOpen);
     }
 
-    const goNext = () => {
+    useEffect(async () => {
+        console.log(currSlide);
+        console.log(pieceLocations);
+        if (currSlide == 0){
+            await setDisableBack(true);
+        } 
+        else{
+            await setDisableBack(false);
+        }
+    }, [currSlide])
+
+    const goNext = async () => {
         if (currSlide + 1 >= numSlides){
-            toggleDialogOpen(!dialogOpen);
+            await toggleDialogOpen(!dialogOpen);
         }
         else{
-            setPieceLocations(pieceLocations.map((n, i) => {
-                i == currSlide ? locations : n
+            await setPieceLocations(pieceLocations.map((n, i) => {
+                return i == currSlide ? locations : n
             }))
-            console.log(pieceLocations);
-            setCurrentSlide(currSlide + 1);
-            setLocations(pieceLocations[currSlide]);
-            setDisableBack(false);
+            await setCurrentSlide(currSlide + 1);
+            await setLocations(() => {
+                console.log(currSlide);
+                return pieceLocations[currSlide]
+            });
+            await setDisableBack(false);
         }
     }
 
-    const goBack = () => {
-        if (currSlide - 1 == 0){
-            setDisableBack(true);
-        } 
-        setCurrentSlide(currSlide - 1);
-        setLocations(pieceLocations[currSlide - 1]);
+    // locations changes to left or right arent being saved
+    const goBack = async () => {
+        await setCurrentSlide(currSlide - 1);
+        //await setLocations(pieceLocations[currSlide]);
+        await setPieceLocations(pieceLocations.map((n, i) => {
+            return i == currSlide ? locations : n
+        }))
+        await setLocations(() => {
+            console.log(currSlide);
+            return pieceLocations[currSlide]
+        });
     }
 
     return (
@@ -255,7 +275,6 @@ function Canvas(props){
                                             <StyledButton onClick={() => {
                                                 toggleDialogOpen(!dialogOpen);
                                                 addFormations();
-                                                setDisableBack(false);
                                                 console.log(dialogOpen);
                                             }}
                                             text="Yes"    
@@ -267,7 +286,6 @@ function Canvas(props){
                                         <Box sx={{my:1, mx: 1, justifyContent:"center", textAlign:"center"}}>
                                             <StyledButton onClick={() => {
                                                 toggleDialogOpen(!dialogOpen);
-                                                setDisableBack(currSlide-1==0);
                                             }}
                                             text="No"
                                             width="75%"
