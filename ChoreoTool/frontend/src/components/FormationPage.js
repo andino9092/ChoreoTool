@@ -6,7 +6,6 @@ import Person from "./Person";
 export default function FormationPage(props){
 
     const renderPeople = () => {
-        console.log(props.locations);
         return props.locations.map((n, index) => 
             <Person key={index} x={n[0]} y={n[1]}></Person>
         )

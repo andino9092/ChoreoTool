@@ -112,14 +112,14 @@ function Canvas(props){
     const [pages, setPages] = useState(0);
     const [locations, setLocations] = useState([]); // Current slide locations
     // If need th others, use all data
-    const [pieceLocations, setPieceLocations] = useState([locations]);
+    const [pieceLocations, setPieceLocations] = useState([[]]);
     const [titles, setTitles] = useState([]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
     const [title, setTitle] = useState("");
-    const [currSlide, setCurrentSlide] = useState(0);
     const [numSlides, setNumSlides] = useState(1);
+    const [currSlide, setCurrentSlide] = useState(0);
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
     const [disableBack, setDisableBack] = useState(true);
@@ -172,22 +172,14 @@ function Canvas(props){
 
     // Creating new slide
     const addFormations = async () => {
-        // if 1st slide ? then u just change it other wise, u add the location on
-        if (currSlide == 0){
-            await setPieceLocations([[locations]]);
-        }
-        else{
-            await setPieceLocations(pieceLocations => [...pieceLocations, locations]);
-        }
         await setTitles(titles => [...titles, title]);
         await setTitle("");
-        if (copyLast){
-            setLocations(locations);
-        }
-        else{
-            setLocations([]);
-        }
-        await setCurrentSlide(currSlide+1);
+        // saves where location was at first
+        await setPieceLocations([...pieceLocations.map((n, i) => {
+            return i == currSlide? locations : n;
+        }), []])
+        await setLocations(copyLast ? locations: []);
+        await setCurrentSlide(numSlides);
         await setNumSlides(numSlides+1);
     }
 
@@ -197,47 +189,48 @@ function Canvas(props){
         toggleDrawer(!drawerOpen);
     }
 
+
+    /**
+     * Goal:
+     * 
+     */
+
+
     useEffect(async () => {
-        console.log(currSlide);
-        console.log(pieceLocations);
         if (currSlide == 0){
             await setDisableBack(true);
-        } 
+        }
         else{
             await setDisableBack(false);
         }
+        await setPieceLocations(pieceLocations.map((n, i) => {
+            return i == currSlide? locations : n;
+        }))
+    }, [currSlide]);
+
+    useEffect(() => {
+        console.log(pieceLocations);
+        console.log(locations);
+        console.log(currSlide);
     }, [currSlide])
 
-    const goNext = async () => {
-        if (currSlide + 1 >= numSlides){
+    const goNext = async() => {
+        if (currSlide +1 >= numSlides){
             await toggleDialogOpen(!dialogOpen);
+            return;
         }
-        else{
-            await setPieceLocations(pieceLocations.map((n, i) => {
-                return i == currSlide ? locations : n
-            }))
-            await setCurrentSlide(currSlide + 1);
-            await setLocations(() => {
-                console.log(currSlide);
-                return pieceLocations[currSlide]
-            });
-            await setDisableBack(false);
-        }
-    }
-
-    // locations changes to left or right arent being saved
-    const goBack = async () => {
-        await setCurrentSlide(currSlide - 1);
-        //await setLocations(pieceLocations[currSlide]);
-        await setPieceLocations(pieceLocations.map((n, i) => {
-            return i == currSlide ? locations : n
-        }))
+        await setCurrentSlide(currSlide+1);
         await setLocations(() => {
-            console.log(currSlide);
-            return pieceLocations[currSlide]
-        });
+            return pieceLocations[currSlide+1];
+        })
     }
 
+    const goBack = async() => {
+        await setCurrentSlide(currSlide-1);
+        await setLocations(() => {
+            return pieceLocations[currSlide-1];
+        })
+    }
     return (
         <div>
             
