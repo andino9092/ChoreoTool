@@ -123,6 +123,8 @@ function Canvas(props){
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
     const [disableBack, setDisableBack] = useState(true);
+    const [prevSlide, setPrevSlide] = useState();
+    const [nextSlide, setNextSlide] = useState();
 
     const verticalSections = 5;
     const horizontalSections = 8;
@@ -180,6 +182,8 @@ function Canvas(props){
         }), []])
         await setLocations(copyLast ? locations: []);
         await setCurrentSlide(numSlides);
+        await setPrevSlide(numSlides-1)
+        await setNextSlide(numSlides+1);
         await setNumSlides(numSlides+1);
     }
 
@@ -189,12 +193,11 @@ function Canvas(props){
         toggleDrawer(!drawerOpen);
     }
 
-
-    /**
-     * Goal:
-     * 
-     */
-
+    const onDrag = async (id, x, y) => {
+        await setLocations(locations.map((n, i) => {
+            return i == id ? [x, y] : n;
+        }))
+    }
 
     useEffect(async () => {
         if (currSlide == 0){
@@ -203,15 +206,13 @@ function Canvas(props){
         else{
             await setDisableBack(false);
         }
-        await setPieceLocations(pieceLocations.map((n, i) => {
-            return i == currSlide? locations : n;
-        }))
     }, [currSlide]);
+
 
     useEffect(() => {
         console.log(pieceLocations);
+        console.log(prevSlide);
         console.log(locations);
-        console.log(currSlide);
     }, [currSlide])
 
     const goNext = async() => {
@@ -219,21 +220,51 @@ function Canvas(props){
             await toggleDialogOpen(!dialogOpen);
             return;
         }
+        await setPieceLocations(pieceLocations.map((n, i) => {
+            return i == currSlide ? locations : n;
+        }))
         await setCurrentSlide(currSlide+1);
         await setLocations(() => {
             return pieceLocations[currSlide+1];
         })
+        await setPrevSlide(currSlide);
+        await setNextSlide(currSlide+2);
     }
 
     const goBack = async() => {
+        await setPieceLocations(pieceLocations.map((n, i) => {
+            console.log(currSlide);
+            return i == currSlide ? locations : n;
+        }))
         await setCurrentSlide(currSlide-1);
         await setLocations(() => {
             return pieceLocations[currSlide-1];
         })
+        await setPrevSlide(currSlide-2);
+        await setNextSlide(currSlide);
     }
+
+    const organize = () => {
+        let data = [[], [], []];
+        data[1] = locations;
+        if (prevSlide >= 0){
+            data[0] = pieceLocations[prevSlide];
+        }
+        if (nextSlide < numSlides){
+            data[2] = pieceLocations[nextSlide];
+        }
+        return data;
+    }
+
+    const data = organize();
+
+    const moveNext = () => {
+
+    }
+
     return (
         <div>
-            
+            {console.log(data[0], data[1], data[2])}
             <Box sx={{my: 2, mx: 2}}>
                 <div style={{display:"flex", justifyContent: "right", marginRight:"10%"}}>
                     <StyledButton onClick={convertData} text="Save" width="10%"></StyledButton>
@@ -247,9 +278,10 @@ function Canvas(props){
                     <FormationPage 
                         cWidth={cWidth} 
                         cHeight={cHeight}
-                        locations={locations}
+                        locations={data}
                         horizontalSections={horizontalSections}
                         verticalSections={verticalSections}
+                        onDrag={onDrag}
                         />
                 </div>
                 <Box sx={{my:3, mx: 2, alignItems:"center", justifyContent:"center"}}>

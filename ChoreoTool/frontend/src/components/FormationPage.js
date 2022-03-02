@@ -1,17 +1,47 @@
-import React from "react"
-import { useState } from "react";
+import React, { useEffect } from "react"
+import { useState, useRef } from "react";
 import { Stage, Shape, Layer } from "react-konva";
 import Person from "./Person";
 
 export default function FormationPage(props){
 
+    const [currLocation, setCurrLocation] = useState(props.locations[1]);
+    const [prevLocation, setPrevLocation] = useState(props.locations[0]);
+    const [nextLocation, setNextLocation] = useState(props.locations[2]);
+    const [people, setPeople] = useState();
+
+    useEffect(() => {
+        setCurrLocation(props.locations[1]);
+        setNextLocation(props.locations[2]);
+        setPrevLocation(props.locations[0]);
+    })
+
+    useEffect(() => {
+        setPeople(renderPeople());
+    }, [currLocation]);
+
+    const peopleRef = useRef();
+
     const renderPeople = () => {
-        return props.locations.map((n, index) => 
-            <Person key={index} x={n[0]} y={n[1]}></Person>
+        return currLocation.map((n, index) => {
+            const prevX = prevLocation[index] ? prevLocation[index][0] : null;
+            const prevY = prevLocation[index] ? prevLocation[index][1] : null;
+            const nextX = nextLocation[index] ? nextLocation[index][0] : null;
+            const nextY = nextLocation[index] ? nextLocation[index][1] : null;
+            return <Person 
+                        ref={peopleRef}
+                        onDrag={props.onDrag} 
+                        id={index} 
+                        x={n[0]} 
+                        y={n[1]}
+                        prevX={prevX}
+                        prevY={prevY}
+                        nextX={nextX}
+                        nextY={nextY}
+                    ></Person>}
+
         )
     }
-
-    const people = renderPeople();
 
     return (
         <Stage width={props.cWidth} height ={props.cHeight}>
