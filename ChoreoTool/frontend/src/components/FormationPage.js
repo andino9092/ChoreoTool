@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { useState, useRef } from "react";
+import { useState, forwardRef} from "react";
 import { Stage, Shape, Layer } from "react-konva";
 import Person from "./Person";
 
@@ -9,6 +9,8 @@ export default function FormationPage(props){
     const [prevLocation, setPrevLocation] = useState(props.locations[0]);
     const [nextLocation, setNextLocation] = useState(props.locations[2]);
     const [people, setPeople] = useState();
+
+    const references = Array(props.locations.length).fill(0).map(() => React.createRef());
 
     useEffect(() => {
         setCurrLocation(props.locations[1]);
@@ -20,7 +22,6 @@ export default function FormationPage(props){
         setPeople(renderPeople());
     }, [currLocation]);
 
-    const peopleRef = useRef();
 
     const renderPeople = () => {
         return currLocation.map((n, index) => {
@@ -29,7 +30,7 @@ export default function FormationPage(props){
             const nextX = nextLocation[index] ? nextLocation[index][0] : null;
             const nextY = nextLocation[index] ? nextLocation[index][1] : null;
             return <Person 
-                        ref={peopleRef}
+                        ref={references[index]}
                         onDrag={props.onDrag} 
                         id={index} 
                         x={n[0]} 
