@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useImperativeHandle} from "react";
 import {Spring, useSpring, animated} from "@react-spring/konva"
 import { useState, forwardRef} from "react";
 import { Circle } from "react-konva";
@@ -10,50 +10,57 @@ const Person = forwardRef((props, ref) => {
     const [hover, toggleHover] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [flag, setFlag] = useState(false);
-    const [styles, setStyles] = useState(useSpring({
-      to: {
-        x: flag ? 600 : 100,
-        fill: flag ? "blue" : "green",
-      }
-    }))
     const nextY = props.nextY;
     const nextX = props.nextX;
     const prevX = props.prevX;
     const prevY = props.prevY;
+    const circ = useRef();
 
     const handleHover = () => {
         toggleHover(!hover);
     }
 
-    const handleClick = () => {
+    const goLast = () => {
       setFlag(!flag);
+      circ.current.to({
+        y: prevY,
+        x: prevX,
+      })
     }
 
-    useEffect(() => {
-      console.log(flag);
-      
-    }, [flag])
-    return(
+    const goNext = () => {
+      setFlag(!flag);
+      circ.current.to({
+        x: nextX,
+        y: nextY,
+      })
+    }
 
-            <animated.Circle 
-              draggable 
-              radius={10} 
-              y={50}
-              fill="green"
-              strokeWidth={hover ? 2: 0}
-              stroke="black"
-              onMouseEnter={handleHover}
-              onMouseLeave={handleHover}
-              onDragStart={() => {
-                  setIsDragging(true);
-                }}
-              onDragEnd={e => {
-                  setIsDragging(false);
-                  props.onDrag(id, e.target.x(), e.target.y());
-                }}
-              onClick={handleClick}
-              styles={{...styles}}
-            />
+
+
+    return(
+      <Circle 
+          draggable 
+          ref={circ}
+          radius={10} 
+          fill="green" 
+          x={props.x} y={props.y} 
+          strokeWidth={hover ? 2: 0}
+          stroke="black"
+          onMouseEnter={handleHover}
+          onMouseLeave={handleHover}
+          onDragStart={() => {
+              setIsDragging(true);
+            }}
+          onClick={flag ? goLast : goNext}
+          onDragEnd={e => {
+              setIsDragging(false);
+              props.onDrag(id, e.target.x(), e.target.y());
+            }}
+          >
+
+       </Circle>
+       
     )
   }
 )

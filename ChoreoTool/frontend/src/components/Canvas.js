@@ -132,6 +132,7 @@ function Canvas(props){
     const cHeight = window.innerHeight/1.5;
     const column = cWidth / horizontalSections;
     const row = cHeight / verticalSections;
+    const pageRef = useRef();
 
     // Have a scale version that opens a page that allows you to see everything
     // Musix Match for lyrics
@@ -144,6 +145,7 @@ function Canvas(props){
     // Choosing slide 
     // Add labels to people
     //      Add custom colors and bind to holding down a key to show names
+    // Have a hover over thing to see next location in formation
 
     const addPerson = async (e) => {
         e.preventDefault();
@@ -242,6 +244,8 @@ function Canvas(props){
         })
         await setPrevSlide(currSlide-2);
         await setNextSlide(currSlide);
+
+        pageRef.current?.goPrev();
     }
 
     const organize = () => {
@@ -276,6 +280,7 @@ function Canvas(props){
                 </Box>
                 <div style={{display:"block", margin:"0 auto"}}>
                     <FormationPage 
+                        ref={pageRef}
                         cWidth={cWidth} 
                         cHeight={cHeight}
                         locations={data}
