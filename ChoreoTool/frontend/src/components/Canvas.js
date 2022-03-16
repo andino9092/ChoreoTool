@@ -1,12 +1,8 @@
-import { height, textAlign } from "@mui/system";
-import React, { useEffect, useRef, useState } from "react";
-import {Stage, Shape, Layer, Circle} from "react-konva"
+import React, { useEffect, useRef, useState, createRef} from "react";
 import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Person from "./Person";
-import { withStyles } from "@mui/styles";
 import StyledText from "./StyledText";
 import StyledButton from "./StyledButton";
 import FormationPage from "./FormationPage";
@@ -128,11 +124,11 @@ function Canvas(props){
 
     const verticalSections = 5;
     const horizontalSections = 8;
-    const cWidth = window.innerWidth/1.5;
-    const cHeight = window.innerHeight/1.5;
+    const cWidth = 1200;
+    const cHeight = 600;
     const column = cWidth / horizontalSections;
     const row = cHeight / verticalSections;
-    const pageRef = useRef();
+    const references = useRef([]);
 
     // Have a scale version that opens a page that allows you to see everything
     // Musix Match for lyrics
@@ -149,11 +145,11 @@ function Canvas(props){
 
     const addPerson = async (e) => {
         e.preventDefault();
-        const x = colText ? colText * column: 500;
+        const x = colText ? colText * column: 600;
         const y = rowText ? (verticalSections - rowText) * row : 300;
         const arr = [x, y];
-        const wait = await setLocations(locations => [...locations, arr]);
-        setPeople(numPeople + 1);
+        await setLocations(locations => [...locations, arr]);
+        await setPeople(numPeople + 1);
     }
 
     const handleTextField = (e) => {
@@ -170,8 +166,31 @@ function Canvas(props){
 
     // error handler, if it is empty don't save
     // This is only for 1 formation page
-    const convertData = () => {
-        var locs = locations.map((n) => "[" + n[0] + "," + n[1] + "]");
+    const convertToDB = () => {
+        const data = pieceLocations.map((n) => {
+            return "[" + n.map(i => {
+                return "[" + i[0] + "," + i[1] + "]";
+            }) + "]";
+            
+        }).join()
+        return fetch("/choreoTool/formations/", {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+                
+            },
+            body: JSON.stringify({
+                formations: data,
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                return data;
+            })
+            .catch(error => console.log(error));
+        ;
     }
 
     // Creating new slide
@@ -196,6 +215,19 @@ function Canvas(props){
     }
 
     const onDrag = async (id, x, y) => {
+        console.log(x);
+        console.log(y);
+        const xRe = x % 75;
+        const yRe = y % 60;
+        x = 75 - xRe < xRe ? x + (75 - xRe): x - xRe;
+        y = 60 - yRe < yRe ? y + (60 - yRe): y - yRe;
+
+        console.log(x);
+        console.log(y);
+        references.current[id].current.to({
+            x: x,
+            y: y,
+        });
         await setLocations(locations.map((n, i) => {
             return i == id ? [x, y] : n;
         }))
@@ -210,6 +242,15 @@ function Canvas(props){
         }
     }, [currSlide]);
 
+    useEffect(async () => {
+        await setPieceLocations(pieceLocations.map((n, i) => {
+            return i == currSlide ? locations : n;
+        }))
+    }, [numPeople, currSlide, locations])
+
+    useEffect(() => {
+        references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
+    })
 
     useEffect(() => {
         console.log(pieceLocations);
@@ -231,6 +272,16 @@ function Canvas(props){
         })
         await setPrevSlide(currSlide);
         await setNextSlide(currSlide+2);
+        for (var i = 0; i < locations.length; i++){
+            const data = pieceLocations[currSlide+1][i];
+            const nextX = data ? data[0] : null;
+            const nextY = data ? data[1] : null;
+            // consider having a new person at that slide
+            references.current[i].current.to({
+                y: nextY,
+                x: nextX,
+            })
+        }
     }
 
     const goBack = async() => {
@@ -244,34 +295,25 @@ function Canvas(props){
         })
         await setPrevSlide(currSlide-2);
         await setNextSlide(currSlide);
-
-        pageRef.current?.goPrev();
-    }
-
-    const organize = () => {
-        let data = [[], [], []];
-        data[1] = locations;
-        if (prevSlide >= 0){
-            data[0] = pieceLocations[prevSlide];
+        for (var i = 0; i < locations.length; i++){
+            const data = pieceLocations[currSlide-1][i];
+            const prevX = data ? data[0] : null;
+            const prevY = data ? data[1] : null;
+            // consider having a new person at that slide
+            references.current[i].current.to({
+                y: prevY,
+                x: prevX,
+            })
         }
-        if (nextSlide < numSlides){
-            data[2] = pieceLocations[nextSlide];
-        }
-        return data;
     }
 
-    const data = organize();
 
-    const moveNext = () => {
-
-    }
 
     return (
         <div>
-            {console.log(data[0], data[1], data[2])}
             <Box sx={{my: 2, mx: 2}}>
                 <div style={{display:"flex", justifyContent: "right", marginRight:"10%"}}>
-                    <StyledButton onClick={convertData} text="Save" width="10%"></StyledButton>
+                    <StyledButton onClick={convertToDB} text="Save" width="10%"></StyledButton>
                 </div>
             </Box>
             <form>
@@ -280,10 +322,10 @@ function Canvas(props){
                 </Box>
                 <div style={{display:"block", margin:"0 auto"}}>
                     <FormationPage 
-                        ref={pageRef}
+                        ref={references}
                         cWidth={cWidth} 
                         cHeight={cHeight}
-                        locations={data}
+                        locations={locations}
                         horizontalSections={horizontalSections}
                         verticalSections={verticalSections}
                         onDrag={onDrag}

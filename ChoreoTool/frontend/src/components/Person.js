@@ -10,41 +10,19 @@ const Person = forwardRef((props, ref) => {
     const [hover, toggleHover] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [flag, setFlag] = useState(false);
-    const nextY = props.nextY;
-    const nextX = props.nextX;
-    const prevX = props.prevX;
-    const prevY = props.prevY;
     const circ = useRef();
 
     const handleHover = () => {
         toggleHover(!hover);
     }
 
-    const goLast = () => {
-      setFlag(!flag);
-      circ.current.to({
-        y: prevY,
-        x: prevX,
-      })
-    }
-
-    const goNext = () => {
-      setFlag(!flag);
-      circ.current.to({
-        x: nextX,
-        y: nextY,
-      })
-    }
-
-
-
     return(
       <Circle 
           draggable 
-          ref={circ}
+          ref={ref}
           radius={10} 
           fill="green" 
-          x={props.x} y={props.y} 
+          x={x} y={y} 
           strokeWidth={hover ? 2: 0}
           stroke="black"
           onMouseEnter={handleHover}
@@ -52,7 +30,6 @@ const Person = forwardRef((props, ref) => {
           onDragStart={() => {
               setIsDragging(true);
             }}
-          onClick={flag ? goLast : goNext}
           onDragEnd={e => {
               setIsDragging(false);
               props.onDrag(id, e.target.x(), e.target.y());
@@ -62,11 +39,9 @@ const Person = forwardRef((props, ref) => {
        </Circle>
        
     )
-  }
-)
+})
 
 export default Person;
-
 
   
 //   render(){

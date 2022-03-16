@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { create } from "@mui/material/styles/createTransitions";
 import React, { useEffect, useImperativeHandle, createRef } from "react"
 import { useState, forwardRef, useRef} from "react";
 import { Stage, Shape, Layer } from "react-konva";
@@ -6,54 +7,41 @@ import Person from "./Person";
 
 const FormationPage = forwardRef((props, ref) => {
 
-    const [currLocation, setCurrLocation] = useState(props.locations[1]);
-    const [prevLocation, setPrevLocation] = useState(props.locations[0]);
-    const [nextLocation, setNextLocation] = useState(props.locations[2]);
+    const [currLocation, setCurrLocation] = useState(props.locations);
     const [people, setPeople] = useState();
-    const [references, setReferences] = useState();
+    const references = ref
 
     useEffect(() => {
-        console.log(props.locations[0]);
-        setCurrLocation(props.locations[1]);
-        setNextLocation(props.locations[2]);
-        setPrevLocation(props.locations[0]);
+        setCurrLocation(props.locations);
     })
-
-    useEffect(() => {
-        console.log(prevLocation);
-    }, [prevLocation])
 
 
     useEffect(() => {
         setPeople(renderPeople());
-    }, [currLocation, prevLocation, nextLocation]);
+    }, [currLocation]);
 
 
     const handleClick = () => {
-        for (var i = 0; i < references.length; i++){
-            console.log(references[i]);
-            // references[i].current.goLast();
+        console.log(references.current);
+        for (var i = 0; i < references.current.length; i++){
+            references.current[i].to({
+                y: prevY,
+                x: prevX,
+            })
         }
     }
 
     const renderPeople = () => {
         return currLocation.map((n, index) => {
-            const prevX = prevLocation[index] ? prevLocation[index][0] : null;
-            const prevY = prevLocation[index] ? prevLocation[index][1] : null;
-            const nextX = nextLocation[index] ? nextLocation[index][0] : null;
-            const nextY = nextLocation[index] ? nextLocation[index][1] : null;
-            setReferences(Array(props.locations[1].length).fill(0).map(() => createRef()))
-            return <Person 
-                        ref={references[index]}
+            const res = <Person 
+                        ref={references.current[index]}
                         onDrag={props.onDrag} 
                         id={index} 
                         x={n[0]} 
                         y={n[1]}
-                        prevX={prevX}
-                        prevY={prevY}
-                        nextX={nextX}
-                        nextY={nextY}
-                    ></Person>}
+                    ></Person>
+            return res;    
+            }
 
         )
     }
@@ -62,7 +50,6 @@ const FormationPage = forwardRef((props, ref) => {
 
     return (
         <div>
-        <Button onClick={handleClick}>HERE</Button>
         <Stage width={props.cWidth} height ={props.cHeight}>
             <Layer>
                 <Shape sceneFunc={(context, shape) => {
