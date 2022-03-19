@@ -16,8 +16,10 @@ class UserData(models.Model):
     spotifyId = models.CharField(max_length=64)
     displayName = models.CharField(max_length=50, null=True)
     profilePic = models.CharField(max_length=200, null=True)
+    formationNum = models.IntegerField()
 
 class Formations(models.Model):
+    title = models.CharField(max_length=100)
     formations = models.CharField(max_length=200)
     user = models.ForeignKey(
         UserData,

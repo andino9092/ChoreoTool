@@ -36,6 +36,8 @@
     "react-draggable": "^4.4.4",
     "react-konva": "^17.0.2-5",
     "react-router-dom": "^6.2.1",
-    "react-spring": "^9.4.3"
+    "react-slick": "^0.28.1",
+    "react-spring": "^9.4.3",
+    "slick-carousel": "^1.8.1"
   }
 }

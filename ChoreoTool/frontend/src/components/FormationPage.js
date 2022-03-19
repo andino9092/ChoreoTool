@@ -55,9 +55,9 @@ const FormationPage = forwardRef((props, ref) => {
                 <Shape sceneFunc={(context, shape) => {
                     context.beginPath();
                     context.moveTo(0, 0);
-                    context.lineTo(1000, 0);
-                    context.lineTo(1000, 1000);
-                    context.lineTo(0, 1000);
+                    context.lineTo(1200, 0);
+                    context.lineTo(1200, 1200);
+                    context.lineTo(0, 1200);
                     context.lineTo(0, 0);
                     context.closePath();
                     context.fillStrokeShape(shape);

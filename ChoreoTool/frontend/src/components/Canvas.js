@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, createRef} from "react";
+import { useNavigate } from "react-router-dom";
 import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -129,6 +130,7 @@ function Canvas(props){
     const column = cWidth / horizontalSections;
     const row = cHeight / verticalSections;
     const references = useRef([]);
+    const history = useNavigate();
 
     // Have a scale version that opens a page that allows you to see everything
     // Musix Match for lyrics
@@ -140,8 +142,11 @@ function Canvas(props){
     // Check to see if drawer doesnt close outside click because its in Canvas rather than CreateFormationSlide
     // Choosing slide 
     // Add labels to people
-    //      Add custom colors and bind to holding down a key to show names
+    // Add custom colors and bind to holding down a key to show names
     // Have a hover over thing to see next location in formation
+    // Fix bug with copy last formation
+    // *** Deployment with django-heroku
+    // Allow tighter formations 
 
     const addPerson = async (e) => {
         e.preventDefault();
@@ -164,8 +169,8 @@ function Canvas(props){
         }
     }
 
-    // error handler, if it is empty don't save
-    // This is only for 1 formation page
+    // error handler
+    // This is only for 1 formation
     const convertToDB = () => {
         const data = pieceLocations.map((n) => {
             return "[" + n.map(i => {
@@ -173,14 +178,14 @@ function Canvas(props){
             }) + "]";
             
         }).join()
-        return fetch("/choreoTool/formations/", {
+        fetch("/choreoTool/formations/", {
             credentials: "include",
             method: "POST",
             headers: {
                 "Content-type": "application/json",
-                
             },
             body: JSON.stringify({
+                title: title ? title : "Title",
                 formations: data,
             })
         })
@@ -191,6 +196,7 @@ function Canvas(props){
             })
             .catch(error => console.log(error));
         ;
+        history("/");
     }
 
     // Creating new slide

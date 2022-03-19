@@ -1,23 +1,27 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid, Box, Avatar, Divider, Paper} from "@mui/material";
-import { textAlign, createTheme, palette} from "@mui/system";
+import { Grid, Box, Avatar, Paper} from "@mui/material";
+import ResponsiveSlider from "./ResponsiveSlider";
+
 
 export default function Dashboard(props){
 
     const [formations, setFormations] = useState();
     const [displayName, setDisplayName] = useState("");
     const [src, setSrc] = useState("");
+    const [numFormations, setTotalFormations] = useState(0);
     const history = useNavigate();
     useEffect(async() => {
         if (!props.status){
             history("/");
         }
-        if (!displayName){
-            await getData();
-        }
     })
-    
+
+    useEffect(async() => {
+        await getData();
+    }, [displayName])
+
+
     const getData = async () => {
         fetch("choreoTool/getUsers")
             .then(response => response.json())
@@ -29,8 +33,12 @@ export default function Dashboard(props){
             .then(response => response.json())
             .then(data => {
                 setFormations(data.data);
+                setTotalFormations(data.formationNum);
                 console.log(formations)
             })
+    }
+
+    const loadSlides = async() => {
     }
 
     return(
@@ -54,17 +62,21 @@ export default function Dashboard(props){
             <Box sx={{my:3, mx:2, height:400}}>
                 <Grid container direction={"row"} alignItems="center" justifyContent="center">
                     <Grid item xs={4}>
-                        <Paper>
-                            {formations == 0 ? 
+
                             <Box sx={{
                                 fontSize: 40,
                                 margin: "0 auto",
                                 textAlign: "center",
-                                
                             }} bgcolor="#2C2A2A" color="#515050" className="noForm">
-                                No Formations
-                            </Box> : ""}
-                        </Paper>
+                                
+                                {numFormations != 0 ? 
+                                <ResponsiveSlider formations={formations}/>
+                                :
+                                <div>
+                                    No Formations
+                                </div>}
+                            </Box> 
+
                         
                     </Grid>
                 </Grid>
