@@ -18,15 +18,15 @@ const Person = forwardRef((props, ref) => {
 
     return(
       <Circle 
-          draggable 
+          draggable={props.draggable}
           ref={ref}
-          radius={10} 
+          radius={props.size} 
           fill="green" 
           x={x} y={y} 
           strokeWidth={hover ? 2: 0}
           stroke="black"
-          onMouseEnter={handleHover}
-          onMouseLeave={handleHover}
+          onMouseEnter={props.hovering ? handleHover: ""}
+          onMouseLeave={props.hovering ? handleHover: ""}
           onDragStart={() => {
               setIsDragging(true);
             }}

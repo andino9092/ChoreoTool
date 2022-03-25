@@ -1,7 +1,5 @@
-import { Button } from "@mui/material";
-import { create } from "@mui/material/styles/createTransitions";
-import React, { useEffect, useImperativeHandle, createRef } from "react"
-import { useState, forwardRef, useRef} from "react";
+import React, { useEffect} from "react"
+import { useState, forwardRef} from "react";
 import { Stage, Shape, Layer } from "react-konva";
 import Person from "./Person";
 
@@ -34,11 +32,14 @@ const FormationPage = forwardRef((props, ref) => {
     const renderPeople = () => {
         return currLocation.map((n, index) => {
             const res = <Person 
+                        draggable={true}
+                        hobering={true}
                         ref={references.current[index]}
                         onDrag={props.onDrag} 
                         id={index} 
                         x={n[0]} 
                         y={n[1]}
+                        size={10}
                     ></Person>
             return res;    
             }

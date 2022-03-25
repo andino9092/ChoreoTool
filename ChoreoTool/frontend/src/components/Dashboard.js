@@ -5,13 +5,14 @@ import ResponsiveSlider from "./ResponsiveSlider";
 import Slider from "react-slick";
 import {BallTriangle} from "react-loader-spinner";
 import Loading from "./Loading";
+import { height } from "@mui/system";
 
 export default function Dashboard(props){
 
     const [formations, setFormations] = useState();
+    const [hover, toggle] = useState(false);
     const [displayName, setDisplayName] = useState("");
     const [src, setSrc] = useState("");
-    const [numFormations, setTotalFormations] = useState(0);
     const history = useNavigate();
     useEffect(async() => {
         if (!props.status){
@@ -34,11 +35,14 @@ export default function Dashboard(props){
             .then(response => response.json())
             .then(data => {
                 setFormations(data.data);
-                setTotalFormations(data.formationNum);
-                console.log(formations)
+                console.log(data)
             })
     }
 
+    const handleHover = () => {
+        toggle(!hover);
+        console.log(hover);
+    }
 
     return(
         <div>
@@ -58,27 +62,25 @@ export default function Dashboard(props){
                             </div>
                         </Grid>
                     </Grid>
-                    
                 </Box>
                 <Box sx={{my:3, mx:2, height:400}}>
                     <Grid container direction={"row"} alignItems="center" justifyContent="center">
                         <Grid item xs={4}>
-                                <Box sx={{
-                                    fontSize: 40,
-                                    margin: "0 auto",
-                                    textAlign: "center",
-                                }} bgcolor="#2C2A2A" color="#515050" className="noForm">
-                                    
-                                </Box> 
-                                <ResponsiveSlider formations={formations}>
-                                </ResponsiveSlider>
-                            
+                            <Paper 
+                                onMouseEnter={handleHover} 
+                                onMouseLeave={handleHover} 
+                                sx={{
+                                    backgroundColor: "#2e2c2c", 
+                                    width:"500px"}} 
+                                elevation="24">
+                                <ResponsiveSlider formations={formations}/>
+                            </Paper>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
             : 
-            <Box sx={{width:'100%', justifyContent:"center", alignItems:"center"}}>
+            <Box sx={{my: 30, width:'100%', justifyContent:"center", alignItems:"center"}}>
                 <Box sx={{my:30, mx: 30, alignItems:"center"}}>
                     <Loading/>
                 </Box>

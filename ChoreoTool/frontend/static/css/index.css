@@ -141,6 +141,21 @@ ul.icons{
     color: white;
 }
 
-.slick-dots li button::before{
+ul.slick-dots li button::before{
     color: green;
+    opacity: 75%;
+}
+
+ul.slick-dots li.slick-active button:before{
+    color:white;
+
+}
+
+.responsiveSlider{
+    height: 400px;
+    width: 500px
+}
+
+div.test:hover{
+    transform: scale(1.1);
 }

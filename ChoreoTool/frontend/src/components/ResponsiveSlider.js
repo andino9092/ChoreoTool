@@ -1,18 +1,21 @@
-import React from "react";
+import React, {useState} from "react";
 import Slider from "react-slick";
-import "./Slider.css"
+import Preview from "./Preview";
 
 export default function ResponsiveSlider(props){
 
+
     return(
         <div>
-        <h2> Responsive </h2>
-        <Slider dots={true} color="white">
+        <Slider className="responsiveSlider" dots={true}>
           {props.formations.map(n => (
-        <h1>
-          {n['formations']}
-        </h1>
-      ))}
+            <div>
+              <h1 style={{alignItems:"center", justifyContent:"center", display:"flex", color:"white"}}>{n['title']}</h1>
+              <h1 style={{color:"green"}}>
+                <Preview formations={n['formations']}/>
+              </h1>
+            </div>
+          ))}
         </Slider>
       </div>
     )
