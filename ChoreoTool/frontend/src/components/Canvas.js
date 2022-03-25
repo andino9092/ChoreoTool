@@ -153,8 +153,8 @@ function Canvas(props){
         const x = colText ? colText * column: 600;
         const y = rowText ? (verticalSections - rowText) * row : 300;
         const arr = [x, y];
-        await setLocations(locations => [...locations, arr]);
-        await setPeople(numPeople + 1);
+        setLocations(locations => [...locations, arr]);
+        setPeople(numPeople + 1);
     }
 
     const handleTextField = (e) => {
@@ -201,17 +201,17 @@ function Canvas(props){
 
     // Creating new slide
     const addFormations = async () => {
-        await setTitles(titles => [...titles, title]);
-        await setTitle("");
+        setTitles(titles => [...titles, title]);
+        setTitle("");
         // saves where location was at first
-        await setPieceLocations([...pieceLocations.map((n, i) => {
+        setPieceLocations([...pieceLocations.map((n, i) => {
             return i == currSlide? locations : n;
         }), []])
-        await setLocations(copyLast ? locations: []);
-        await setCurrentSlide(numSlides);
-        await setPrevSlide(numSlides-1)
-        await setNextSlide(numSlides+1);
-        await setNumSlides(numSlides+1);
+        setLocations(copyLast ? locations: []);
+        setCurrentSlide(numSlides);
+        setPrevSlide(numSlides-1)
+        setNextSlide(numSlides+1);
+        setNumSlides(numSlides+1);
     }
 
     // One for choosing slide
@@ -234,22 +234,22 @@ function Canvas(props){
             x: x,
             y: y,
         });
-        await setLocations(locations.map((n, i) => {
+        setLocations(locations.map((n, i) => {
             return i == id ? [x, y] : n;
         }))
     }
 
     useEffect(async () => {
         if (currSlide == 0){
-            await setDisableBack(true);
+            setDisableBack(true);
         }
         else{
-            await setDisableBack(false);
+            setDisableBack(false);
         }
     }, [currSlide]);
 
     useEffect(async () => {
-        await setPieceLocations(pieceLocations.map((n, i) => {
+        setPieceLocations(pieceLocations.map((n, i) => {
             return i == currSlide ? locations : n;
         }))
     }, [numPeople, currSlide, locations])
@@ -266,18 +266,18 @@ function Canvas(props){
 
     const goNext = async() => {
         if (currSlide +1 >= numSlides){
-            await toggleDialogOpen(!dialogOpen);
+            toggleDialogOpen(!dialogOpen);
             return;
         }
-        await setPieceLocations(pieceLocations.map((n, i) => {
+        setPieceLocations(pieceLocations.map((n, i) => {
             return i == currSlide ? locations : n;
         }))
-        await setCurrentSlide(currSlide+1);
-        await setLocations(() => {
+        setCurrentSlide(currSlide+1);
+        setLocations(() => {
             return pieceLocations[currSlide+1];
         })
-        await setPrevSlide(currSlide);
-        await setNextSlide(currSlide+2);
+        setPrevSlide(currSlide);
+        setNextSlide(currSlide+2);
         for (var i = 0; i < locations.length; i++){
             const data = pieceLocations[currSlide+1][i];
             const nextX = data ? data[0] : null;
@@ -291,16 +291,16 @@ function Canvas(props){
     }
 
     const goBack = async() => {
-        await setPieceLocations(pieceLocations.map((n, i) => {
+        setPieceLocations(pieceLocations.map((n, i) => {
             console.log(currSlide);
             return i == currSlide ? locations : n;
         }))
-        await setCurrentSlide(currSlide-1);
-        await setLocations(() => {
+        setCurrentSlide(currSlide-1);
+        setLocations(() => {
             return pieceLocations[currSlide-1];
         })
-        await setPrevSlide(currSlide-2);
-        await setNextSlide(currSlide);
+        setPrevSlide(currSlide-2);
+        setNextSlide(currSlide);
         for (var i = 0; i < locations.length; i++){
             const data = pieceLocations[currSlide-1][i];
             const prevX = data ? data[0] : null;

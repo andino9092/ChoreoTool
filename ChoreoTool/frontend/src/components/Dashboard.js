@@ -2,7 +2,9 @@ import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { Grid, Box, Avatar, Paper} from "@mui/material";
 import ResponsiveSlider from "./ResponsiveSlider";
-
+import Slider from "react-slick";
+import {BallTriangle} from "react-loader-spinner";
+import Loading from "./Loading";
 
 export default function Dashboard(props){
 
@@ -18,18 +20,17 @@ export default function Dashboard(props){
     })
 
     useEffect(async() => {
-        await getData();
+        getData();
     }, [displayName])
 
-
     const getData = async () => {
-        fetch("choreoTool/getUsers")
+        await fetch("choreoTool/getUsers")
             .then(response => response.json())
             .then(data => {
                 setDisplayName(data.data.displayName);
                 setSrc(data.data.profilePic);
             })
-        fetch("choreoTool/formations")
+        await fetch("choreoTool/formations")
             .then(response => response.json())
             .then(data => {
                 setFormations(data.data);
@@ -38,49 +39,51 @@ export default function Dashboard(props){
             })
     }
 
-    const loadSlides = async() => {
-    }
 
     return(
-        <Box sx={{width:'100%', }}>
-            <Box sx={{my:3, mx: 2}}>
-                <Grid container direction={"row"} alignItems="center">
-                    <Grid item>
-                        <Avatar src={src} sx={{ width: 200, height: 200 }}/> 
+        <div>
+        {formations ? 
+            <Box sx={{width:'100%', }}>
+                <Box sx={{my:3, mx: 2}}>
+                    <Grid container direction={"row"} alignItems="center">
+                        <Grid item>
+                            <Avatar src={src} sx={{ width: 200, height: 200 }}/> 
+                        </Grid>
+                        <Grid item xs={10} >
+                            <div className="heading">
+                                PROFILE
+                            </div>
+                            <div className="name">
+                                {displayName}
+                            </div>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={10} >
-                        <div className="heading">
-                            PROFILE
-                        </div>
-                        <div className="name">
-                            {displayName}
-                        </div>
+                    
+                </Box>
+                <Box sx={{my:3, mx:2, height:400}}>
+                    <Grid container direction={"row"} alignItems="center" justifyContent="center">
+                        <Grid item xs={4}>
+                                <Box sx={{
+                                    fontSize: 40,
+                                    margin: "0 auto",
+                                    textAlign: "center",
+                                }} bgcolor="#2C2A2A" color="#515050" className="noForm">
+                                    
+                                </Box> 
+                                <ResponsiveSlider formations={formations}>
+                                </ResponsiveSlider>
+                            
+                        </Grid>
                     </Grid>
-                </Grid>
-                
+                </Box>
             </Box>
-            <Box sx={{my:3, mx:2, height:400}}>
-                <Grid container direction={"row"} alignItems="center" justifyContent="center">
-                    <Grid item xs={4}>
-
-                            <Box sx={{
-                                fontSize: 40,
-                                margin: "0 auto",
-                                textAlign: "center",
-                            }} bgcolor="#2C2A2A" color="#515050" className="noForm">
-                                
-                                {numFormations != 0 ? 
-                                <ResponsiveSlider formations={formations}/>
-                                :
-                                <div>
-                                    No Formations
-                                </div>}
-                            </Box> 
-
-                        
-                    </Grid>
-                </Grid>
+            : 
+            <Box sx={{width:'100%', justifyContent:"center", alignItems:"center"}}>
+                <Box sx={{my:30, mx: 30, alignItems:"center"}}>
+                    <Loading/>
+                </Box>
             </Box>
-        </Box>
+}
+        </div>
     )
 }

@@ -140,3 +140,7 @@ ul.icons{
 .MuiFormControl-root.MuiTextField-root{
     color: white;
 }
+
+.slick-dots li button::before{
+    color: green;
+}
