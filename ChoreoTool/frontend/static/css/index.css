@@ -104,14 +104,12 @@ div.footer{
     display: block;
     margin: 0 auto;
     padding-bottom: 20px;
-    background-color: black;
 }
 
 ul.icons{
     padding: 0;
     list-style: none;
     text-align: center;
-    background-color: black;
 }
 
 li.icons{

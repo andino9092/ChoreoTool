@@ -6,6 +6,7 @@ import Slider from "react-slick";
 import {BallTriangle} from "react-loader-spinner";
 import Loading from "./Loading";
 import { height } from "@mui/system";
+import SelectFormation from "./SelectFormation";
 
 export default function Dashboard(props){
 
@@ -64,15 +65,25 @@ export default function Dashboard(props){
                             <Paper 
                                 sx={{
                                     backgroundColor: "#2e2c2c", 
-                                    width:"500px"}} 
+                                    width:"500px",
+                                }} 
                                 elevation="24">
+                                    {formations.map((n, i) => {
+                                        return (
+                                            <SelectFormation formations={n['formations']} title={n['title']}/>
+                                        )
+                                    })}
                             </Paper>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
             :
-            <Loading/>
+            <Box sx={{my: 30, width:'100%', justifyContent:"center", alignItems:"center"}}>
+                <Box sx={{my:30, mx: 30, alignItems:"center"}}>
+                    <Loading/>
+                </Box>
+            </Box>
 
 }
         </div>

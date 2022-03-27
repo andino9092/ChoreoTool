@@ -197,8 +197,6 @@ function Canvas(props){
 
     // Creating new slide
     const addFormations = async () => {
-        setTitles(titles => [...titles, title]);
-        setTitle("");
         // saves where location was at first
         setPieceLocations([...pieceLocations.map((n, i) => {
             return i == currSlide? locations : n;
