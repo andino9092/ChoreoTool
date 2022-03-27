@@ -28,9 +28,10 @@ export default function App() {
             <Route path="/" element={isLoggedIn ? <Navigate replace to="dashboard"/> : <Navigate replace to="infoPage"/>}/>
             <Route path="/infoPage" element={<InfoPage status={isLoggedIn}/>}/>
             <Route path="/dashboard" element={<Dashboard status={isLoggedIn}/>}/>
-            <Route path="/create" element={<CreateFormationSlide/>}/>
+            <Route path="/create" element={<CreateFormationSlide status={isLoggedIn}/>}/>
           </Routes>
-          <div className="footer">
+      </Router>
+      <div className="footer">
             <ul className="icons">
               {/* Add links */}
                <li className="icons"><a><i className="fa fa-github"></i></a></li>
@@ -38,7 +39,6 @@ export default function App() {
                <li className="icons"><a><i className="fa fa-spotify"></i></a></li>
             </ul>
           </div>
-      </Router>
     </div>
   )
 }

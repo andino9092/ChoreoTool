@@ -39,11 +39,6 @@ export default function Dashboard(props){
             })
     }
 
-    const handleHover = () => {
-        toggle(!hover);
-        console.log(hover);
-    }
-
     return(
         <div>
         {formations ? 
@@ -65,26 +60,20 @@ export default function Dashboard(props){
                 </Box>
                 <Box sx={{my:3, mx:2, height:400}}>
                     <Grid container direction={"row"} alignItems="center" justifyContent="center">
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Paper 
-                                onMouseEnter={handleHover} 
-                                onMouseLeave={handleHover} 
                                 sx={{
                                     backgroundColor: "#2e2c2c", 
                                     width:"500px"}} 
                                 elevation="24">
-                                <ResponsiveSlider formations={formations}/>
                             </Paper>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
-            : 
-            <Box sx={{my: 30, width:'100%', justifyContent:"center", alignItems:"center"}}>
-                <Box sx={{my:30, mx: 30, alignItems:"center"}}>
-                    <Loading/>
-                </Box>
-            </Box>
+            :
+            <Loading/>
+
 }
         </div>
     )

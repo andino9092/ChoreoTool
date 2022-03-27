@@ -18,22 +18,11 @@ const FormationPage = forwardRef((props, ref) => {
         setPeople(renderPeople());
     }, [currLocation]);
 
-
-    const handleClick = () => {
-        console.log(references.current);
-        for (var i = 0; i < references.current.length; i++){
-            references.current[i].to({
-                y: prevY,
-                x: prevX,
-            })
-        }
-    }
-
     const renderPeople = () => {
         return currLocation.map((n, index) => {
             const res = <Person 
                         draggable={true}
-                        hobering={true}
+                        hovering={true}
                         ref={references.current[index]}
                         onDrag={props.onDrag} 
                         id={index} 
@@ -56,9 +45,9 @@ const FormationPage = forwardRef((props, ref) => {
                 <Shape sceneFunc={(context, shape) => {
                     context.beginPath();
                     context.moveTo(0, 0);
-                    context.lineTo(1200, 0);
-                    context.lineTo(1200, 1200);
-                    context.lineTo(0, 1200);
+                    context.lineTo(props.cWidth, 0);
+                    context.lineTo(props.cWidth, props.cHeight);
+                    context.lineTo(0, props.cHeight);
                     context.lineTo(0, 0);
                     context.closePath();
                     context.fillStrokeShape(shape);

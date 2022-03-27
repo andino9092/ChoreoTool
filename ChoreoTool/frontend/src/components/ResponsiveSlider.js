@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import Slider from "react-slick";
 import Preview from "./Preview";
 
+// Not used in dashboard
 export default function ResponsiveSlider(props){
 
 

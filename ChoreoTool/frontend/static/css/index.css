@@ -99,20 +99,22 @@ a:hover{
     color: green;
 }
 
-.footer{
+div.footer{
     width: 200px;
     display: block;
     margin: 0 auto;
     padding-bottom: 20px;
+    background-color: black;
 }
 
 ul.icons{
     padding: 0;
     list-style: none;
     text-align: center;
+    background-color: black;
 }
 
-.icons li{
+li.icons{
     display: inline-block;
     padding: 5px;
     padding-left: 10px;

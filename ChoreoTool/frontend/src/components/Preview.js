@@ -11,6 +11,7 @@ export default function Preview(props){
         setPeople(renderPeople());
     }, [props.formations]);
 
+    // this only works if 1 slide from props.formations
     const convertData = (input) => {
         var data = input.substring(1, input.length -1);
         var res = [];

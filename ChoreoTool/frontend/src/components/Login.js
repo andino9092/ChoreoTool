@@ -6,32 +6,6 @@ export default function Login(props){
     const [displayName, setDisplayName] = useState();
     const [hover, toggle] = useState(false);
 
-    useEffect(async() => {
-        if (!displayName){
-            await getData();
-        }
-    })
-    
-    const getData = async () => {
-        fetch("choreoTool/getUsers")
-            .then(response => response.json())
-            .then(data => {
-                setDisplayName(data.data.displayName);
-            })
-    }
-
-    useEffect(() => {
-        fetch("/choreoTool/isAuthenticated")
-            .then((response) => response.json())
-            .then((data) => {
-                logIn(data.status);
-                toggle(false);
-                props.onLogIn(data.status);
-                console.log(isLoggedIn);
-            });
-      }, [isLoggedIn]);
-      
-    
     useEffect(() => {
         logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
     }, []);
@@ -40,9 +14,36 @@ export default function Login(props){
         window.localStorage.setItem('isLoggedIn', isLoggedIn);
     }, [isLoggedIn]);
 
-    const handleLogin = () => {
+    
+    useEffect( async () => {
+        console.log(isLoggedIn);
+        await fetch("/choreoTool/isAuthenticated")
+        .then((response) => response.json())
+        .then((data) => {
+            logIn(data.status);
+            toggle(false);
+            props.onLogIn(data.status);
+            console.log(isLoggedIn);
+        });
+    }, [isLoggedIn]);
+    
+    useEffect(async() => {
+        if (!displayName){
+            await getData();
+        }
+    })
+    
+    const getData = async () => {
+        await fetch("choreoTool/getUsers")
+            .then(response => response.json())
+            .then(data => {
+                setDisplayName(data.data.displayName);
+            })
+    }
+
+    const handleLogin = async () => {
         if (!isLoggedIn){
-            fetch("/choreoTool/authorize")
+            await fetch("/choreoTool/authorize")
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(data)

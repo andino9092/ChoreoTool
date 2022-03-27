@@ -13,7 +13,7 @@ export default function CreateFormationSlide(props){
     return(
         <div>
 
-            <Canvas/> 
+            <Canvas isLoggedIn={props.isLoggedIn}/> 
                 
          
             

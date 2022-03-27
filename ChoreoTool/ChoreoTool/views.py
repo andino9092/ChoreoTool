@@ -67,7 +67,6 @@ def spotifyCallback(request, format = None):
 
 @api_view(['GET'])
 def IsAuthenticated(request, format = None):
-    print(request.session.session_key)
     is_authenticate = is_spotify_authenticated(request.session.session_key)
     tokens = get_user_tokens(request.session.session_key)
     if tokens:
@@ -77,8 +76,11 @@ def IsAuthenticated(request, format = None):
     
 @api_view(['GET'])
 def getUsers(request):
-    print(request.session.session_key)
-    spotifyAccessToken = get_user_tokens(request.session.session_key).access_token
+    userTokens = get_user_tokens(request.session.session_key)
+    if (userTokens):
+        spotifyAccessToken = userTokens.access_token
+    else:
+        return Response({'status':False})
     userData = get("https://api.spotify.com/v1/me",headers={
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -109,6 +111,7 @@ def getAllUsers(request):
 
 @api_view(['GET'])
 def getTokens(request):
+    print(get_user_tokens("rzy46klsf3m3ak7bl28bdvc3y70dlutq").refresh_token)
     tokens = SpotifyToken.objects.all()
     serializer = SpotifyTokenSerializer(tokens, many=True)
     # tokens = SpotifyToken(user=session_id, access_token=access_token, 

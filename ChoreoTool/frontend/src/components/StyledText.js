@@ -26,8 +26,6 @@ const StyledTextField = styled(TextField)(({
         '& .MuiInputBase-input': {
             color: "white"
         },
-      
-
     },
 
     
