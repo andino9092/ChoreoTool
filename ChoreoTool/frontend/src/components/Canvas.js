@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, createRef} from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -7,6 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StyledText from "./StyledText";
 import StyledButton from "./StyledButton";
 import FormationPage from "./FormationPage";
+import StyledDivider from "./StyledDivider";
 import {styled} from "@mui/material/styles"
 
 const StyledDialog = styled(Dialog)(({
@@ -40,18 +41,6 @@ const StyledIcon = styled(IconButton)(({
         color:"white",
         fontSize:"1rem",
     }
-}))
-
-const StyledDivider = styled(Divider)(({
-    '&.MuiDivider-withChildren':{
-        '&::before':{
-            borderTop:"white solid 1px"
-        },
-        '&::after':{
-            borderTop:"white solid 1px"
-        }
-    }
-
 }))
 
 const StyledDrawer = styled(Drawer)(({
@@ -103,17 +92,18 @@ const TitleStyle = styled(TextField)(({
 
 function Canvas(props){
 
+    const {state} = useLocation();
     const {classes} = props;
 
     const [numPeople, setPeople] = useState(0);
-    const [locations, setLocations] = useState([]); // Current slide locations
-    const [pieceLocations, setPieceLocations] = useState([[]]);
+    const [locations, setLocations] = useState(state ? state.formations[0] : []); // Current slide locations
+    const [pieceLocations, setPieceLocations] = useState(state ? state.formations : [[]]);
     const [titles, setTitles] = useState([]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
-    const [title, setTitle] = useState("");
-    const [numSlides, setNumSlides] = useState(1);
+    const [title, setTitle] = useState(state ? state.title: "");
+    const [numSlides, setNumSlides] = useState(state ? state.formations.length : 1);
     const [currSlide, setCurrentSlide] = useState(0);
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
@@ -226,6 +216,12 @@ function Canvas(props){
         }))
     }
 
+    useEffect(() => {
+        console.log(locations.length);
+        references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
+    })
+
+
     useEffect(async () => {
         if (currSlide == 0){
             setDisableBack(true);
@@ -240,10 +236,6 @@ function Canvas(props){
             return i == currSlide ? locations : n;
         }))
     }, [numPeople, currSlide, locations])
-
-    useEffect(() => {
-        references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
-    })
 
     useEffect(() => {
         console.log(pieceLocations);
@@ -267,6 +259,7 @@ function Canvas(props){
             const nextX = data ? data[0] : null;
             const nextY = data ? data[1] : null;
             // consider having a new person at that slide
+            console.log(references.current[i].current);
             references.current[i].current.to({
                 y: nextY,
                 x: nextX,
@@ -276,7 +269,6 @@ function Canvas(props){
 
     const goBack = async() => {
         setPieceLocations(pieceLocations.map((n, i) => {
-            console.log(currSlide);
             return i == currSlide ? locations : n;
         }))
         setCurrentSlide(currSlide-1);
@@ -367,7 +359,7 @@ function Canvas(props){
                     <Box sx={{height:"50px"}}>
                         <h1 style={{color:"white", display:"block", margin:"0 auto", textAlign:"center",}}>Tools</h1>
                     </Box>
-                    <StyledDivider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>CREATE MARKER</StyledDivider>
+                    <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="CREATE MARKER"/>
                     <Box sx={{height:"150px"}}>   
                             <Box sx={{my: 2, mx: 1, alignItems:"center"}}>
                                 <Grid container direction={"row"} alignItems="center" justifyContent="center">
@@ -379,7 +371,7 @@ function Canvas(props){
                                     <StyledButton text="Create Person" onClick={addPerson} style={{ display:"block", margin:"0 auto"}}/>
                             </Grid>
                     </Box>
-                    <StyledDivider textAlign="center" sx={{height:"10px", fontSize:"10px", color:"white"}}>NEW SLIDES</StyledDivider>
+                    <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="NEW SLIDES"/>
                     <Box sx={{mx:2, my:1}}>
                         <StyledIcon onClick={addFormations}><AddIcon sx={{color:"green"}}></AddIcon>Create New Slide</StyledIcon>
                         <FormGroup sx={{color:"white"}}>

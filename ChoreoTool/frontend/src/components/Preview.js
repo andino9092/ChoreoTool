@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Stage, Shape, Layer} from "react-konva";
 import Person from "./Person";
+import convertToData from "./ConvertToData";
 
 export default function Preview(props){
 
@@ -12,18 +13,6 @@ export default function Preview(props){
     }, [props.formations]);
 
     // this only works if 1 slide from props.formations
-    const convertData = (input) => {
-        var data = input.substring(1, input.length -1);
-        var res = [];
-        while(data.indexOf('[') != -1){
-            var left = data.indexOf('[');
-            var right = data.indexOf(']');
-            var pos = data.substring(left + 1, right).split(',').map(n => parseInt(n));
-            data = data.substring(right+2);
-            res = [...res, pos];
-        }
-        return res;
-    }
 
     const renderPeople = () => {
         return convertData(props.formations).map((n, index) => {

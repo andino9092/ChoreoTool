@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid, Box, Avatar, Paper} from "@mui/material";
-import ResponsiveSlider from "./ResponsiveSlider";
-import Slider from "react-slick";
-import {BallTriangle} from "react-loader-spinner";
+import { Grid, Box, Avatar, Paper, Divider} from "@mui/material";
+import StyledDivider from "./StyledDivider";
 import Loading from "./Loading";
-import { height } from "@mui/system";
 import SelectFormation from "./SelectFormation";
 
 export default function Dashboard(props){
@@ -59,24 +56,27 @@ export default function Dashboard(props){
                         </Grid>
                     </Grid>
                 </Box>
-                <Box sx={{my:3, mx:2, height:400}}>
-                    <Grid container direction={"row"} alignItems="center" justifyContent="center">
-                        <Grid item xs={6}>
-                            <Paper 
-                                sx={{
-                                    backgroundColor: "#2e2c2c", 
-                                    width:"500px",
-                                }} 
-                                elevation="24">
-                                    {formations.map((n, i) => {
-                                        return (
+                <Grid container direction={"row"} alignItems="center" justifyContent="center">
+                    <Grid item xs={6}>
+                        <Paper 
+                            sx={{
+                                backgroundColor: "#2e2c2c",
+                                paddingTop:"1px",
+                                paddingBottom:"1px",
+                                height:"100%",
+                            }} 
+                            elevation="24">
+                                {formations.map((n, i) => {
+                                    return (
+                                        <>
                                             <SelectFormation formations={n['formations']} title={n['title']}/>
-                                        )
-                                    })}
-                            </Paper>
-                        </Grid>
+                                            {i != formations.length - 1 ? <StyledDivider borderTop="white solid 1px"/> : ""}
+                                        </>
+                                    )
+                                })}
+                        </Paper>
                     </Grid>
-                </Box>
+                </Grid>
             </Box>
             :
             <Box sx={{my: 30, width:'100%', justifyContent:"center", alignItems:"center"}}>

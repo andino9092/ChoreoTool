@@ -18,12 +18,17 @@
     font-size: 20px;
 }
 
+body { 
+    min-height: 100vh; 
+    background-image: linear-gradient(to bottom right, rgb(73, 66, 66), black);
+}
+
+
 .spotify{
     background-image: linear-gradient(to bottom right, rgb(73, 66, 66), black);
     color: white;
     font-family: "Circular Std";
     font-weight: lighter;
-    height: 100%;
 }
 
 .align{
