@@ -108,8 +108,9 @@ function Canvas(props){
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
     const [disableBack, setDisableBack] = useState(true);
+    const [formationPage, setFormationpage] = useState();
 
-
+    console.log(state.id)
     const verticalSections = 5;
     const horizontalSections = 8;
     const cWidth = 900;
@@ -164,24 +165,43 @@ function Canvas(props){
                 return "[" + i[0] + "," + i[1] + "]";
             }) + "]";
         }).join()
-        await fetch("/choreoTool/formations/", {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-                title: title ? title : "Title",
-                formations: data,
+        if (!state){
+            await fetch("/choreoTool/formations/", {
+                credentials: "include",
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: title ? title : "Title",
+                    formations: data,
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                return data;
-            })
-            .catch(error => console.log(error));
-        ;
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    return data;
+                })
+                .catch(error => console.log(error));
+        }
+        else{
+            await fetch("/choreoTool/formations/", {
+                credentials: "include",
+                method: "PUT",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: state.id,
+                    title: title,
+                    formations: data,
+                })
+            }) 
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
+        }
+
         history("/");
     }
 
@@ -217,7 +237,6 @@ function Canvas(props){
     }
 
     useEffect(() => {
-        console.log(locations.length);
         references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
     })
 
@@ -229,6 +248,7 @@ function Canvas(props){
         else{
             setDisableBack(false);
         }
+        setFormationpage(renderFormationPage());
     }, [currSlide]);
 
     useEffect(async () => {
@@ -241,6 +261,19 @@ function Canvas(props){
         console.log(pieceLocations);
         console.log(locations);
     }, [currSlide])
+
+    const renderFormationPage = () => {
+        return (<FormationPage 
+            ref={references}
+            new={state ? false: true}
+            cWidth={cWidth} 
+            cHeight={cHeight}
+            locations={locations}
+            horizontalSections={horizontalSections}
+            verticalSections={verticalSections}
+            onDrag={onDrag}
+            />)
+    }
 
     const goNext = async() => {
         if (currSlide +1 >= numSlides){
@@ -258,7 +291,6 @@ function Canvas(props){
             const data = pieceLocations[currSlide+1][i];
             const nextX = data ? data[0] : null;
             const nextY = data ? data[1] : null;
-            // consider having a new person at that slide
             console.log(references.current[i].current);
             references.current[i].current.to({
                 y: nextY,
@@ -279,7 +311,11 @@ function Canvas(props){
             const data = pieceLocations[currSlide-1][i];
             const prevX = data ? data[0] : null;
             const prevY = data ? data[1] : null;
-            // consider having a new person at that slide
+            if (!prevX){
+                references.current[i].current.x = null;
+                references.current[i].current.y = null;
+                continue;
+            }
             references.current[i].current.to({
                 y: prevY,
                 x: prevX,
@@ -298,15 +334,7 @@ function Canvas(props){
                 </div>
             </Box>
             <div style={{display:"block", margin:"0 auto"}}>
-                <FormationPage 
-                    ref={references}
-                    cWidth={cWidth} 
-                    cHeight={cHeight}
-                    locations={locations}
-                    horizontalSections={horizontalSections}
-                    verticalSections={verticalSections}
-                    onDrag={onDrag}
-                    />
+                {formationPage}
             </div>
             <Box sx={{my:3, mx: 2, alignItems:"center", justifyContent:"center"}}>
                 <Grid container direction="column" alignItems="center" justifyContent="center">

@@ -9,6 +9,7 @@ export default function SelectFormation(props){
 
     const handleClick = () => {
         history('/create', {state: {
+            id: props.id,
             title: props.title,
             formations: convertToData(props.formations),
         }})

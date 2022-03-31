@@ -69,7 +69,7 @@ export default function Dashboard(props){
                                 {formations.map((n, i) => {
                                     return (
                                         <>
-                                            <SelectFormation formations={n['formations']} title={n['title']}/>
+                                            <SelectFormation id={n['id']} formations={n['formations']} title={n['title']}/>
                                             {i != formations.length - 1 ? <StyledDivider borderTop="white solid 1px"/> : ""}
                                         </>
                                     )

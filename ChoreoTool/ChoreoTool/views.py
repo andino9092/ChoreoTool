@@ -122,19 +122,26 @@ def getTokens(request):
 def formations(request):
     user__in = UserData.objects.get(user=request.session.session_key)
     if request.method == 'GET':
-        print(request.session.session_key)
-        print(user__in)
         formations = Formations.objects.filter(user=user__in)
         serializer = FormationsSerializer(formations, many=True)
         if formations:
             return Response({'data':serializer.data}, status.HTTP_200_OK)
         return Response({'data':0}, status.HTTP_200_OK)
     elif request.method == 'POST':
-        print(request.data)
         formation = Formations(formations=request.data['formations'], user=user__in, title=request.data['title'])
         formation.save()
-        print(formation)
         return Response({'data': request.data})
+    elif request.method == 'PUT':
+        data = request.data
+        formation = Formations.objects.get(id=data['id'])
+        formation.formations = data['formations']
+        formation.title = data['title']
+        formation.save()
+
+        serializer = FormationsSerializer(formation)
+        return Response(serializer.data)
+
+
         
 
 @api_view(['GET'])

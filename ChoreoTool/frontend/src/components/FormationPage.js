@@ -11,8 +11,8 @@ const FormationPage = forwardRef((props, ref) => {
 
     useEffect(() => {
         setCurrLocation(props.locations);
+        console.log(references);
     })
-
 
     useEffect(() => {
         setPeople(renderPeople());
@@ -26,6 +26,7 @@ const FormationPage = forwardRef((props, ref) => {
                         ref={references.current[index]}
                         onDrag={props.onDrag} 
                         id={index} 
+                        key={index}
                         x={n[0]} 
                         y={n[1]}
                         size={10}
