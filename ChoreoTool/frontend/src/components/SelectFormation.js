@@ -2,6 +2,17 @@ import React from "react";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import convertToData from "./ConvertToData";
+import { styled } from "@mui/material/styles";
+
+const StyledBox = styled(Box)(({
+    '&.MuiBox-root':{
+        '&:hover':{
+            color:"black",
+            backgroundColor:"white",
+        },
+    },
+
+}))
 
 export default function SelectFormation(props){
 
@@ -16,10 +27,10 @@ export default function SelectFormation(props){
     }
 
     return (
-        <Box sx={{my:1, mx:1, padding:"10px", color:"white", fontSize:20}}>
-            <div onClick={handleClick}>
+        <StyledBox sx={{padding:"20px", paddingLeft:"10px", color:"white", fontSize:20}}>
+            <a className="selectFormations" onClick={handleClick}>
                 {props.title}
-            </div>
-        </Box>
+            </a>
+        </StyledBox>
     )
 }

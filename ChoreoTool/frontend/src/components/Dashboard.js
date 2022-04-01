@@ -61,8 +61,6 @@ export default function Dashboard(props){
                         <Paper 
                             sx={{
                                 backgroundColor: "#2e2c2c",
-                                paddingTop:"1px",
-                                paddingBottom:"1px",
                                 height:"100%",
                             }} 
                             elevation="24">

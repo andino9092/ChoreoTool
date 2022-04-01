@@ -110,7 +110,6 @@ function Canvas(props){
     const [disableBack, setDisableBack] = useState(true);
     const [formationPage, setFormationpage] = useState();
 
-    console.log(state.id)
     const verticalSections = 5;
     const horizontalSections = 8;
     const cWidth = 900;
@@ -248,8 +247,11 @@ function Canvas(props){
         else{
             setDisableBack(false);
         }
-        setFormationpage(renderFormationPage());
     }, [currSlide]);
+
+    useEffect(async() => {
+        setFormationpage(renderFormationPage());
+    }, [numPeople, currSlide])
 
     useEffect(async () => {
         setPieceLocations(pieceLocations.map((n, i) => {
@@ -260,7 +262,7 @@ function Canvas(props){
     useEffect(() => {
         console.log(pieceLocations);
         console.log(locations);
-    }, [currSlide])
+    }, [currSlide, numPeople])
 
     const renderFormationPage = () => {
         return (<FormationPage 
@@ -379,7 +381,7 @@ function Canvas(props){
             </Box>
             <StyledDrawer
                 anchor="right"
-                open={drawerOpen}
+                open={true}
                 onClose={handleDrawer}
                 onOpen={handleDrawer}
                 variant="persistent">
