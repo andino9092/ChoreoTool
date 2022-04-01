@@ -15,7 +15,9 @@ const FormationPage = forwardRef((props, ref) => {
     })
 
     useEffect(() => {
-        setPeople(renderPeople());
+        if (currLocation){
+            setPeople(renderPeople());
+        }
     }, [currLocation]);
 
     const renderPeople = () => {

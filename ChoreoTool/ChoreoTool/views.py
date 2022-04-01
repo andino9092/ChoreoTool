@@ -118,7 +118,7 @@ def getTokens(request):
     #                             refresh_token=10, token_type=token_type, expires_in=expires_in)
     return Response({'data':serializer.data}, status.HTTP_200_OK)
 
-@api_view(['GET', 'POST', 'PUT'])
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def formations(request):
     user__in = UserData.objects.get(user=request.session.session_key)
     if request.method == 'GET':
@@ -140,7 +140,10 @@ def formations(request):
 
         serializer = FormationsSerializer(formation)
         return Response(serializer.data)
-
+    elif request.method == 'DELETE':
+        formation = Formations.objects.get(id=request.data['id'])
+        formation.delete()
+        return Response(status=status.HTTP_200_OK)
 
         
 

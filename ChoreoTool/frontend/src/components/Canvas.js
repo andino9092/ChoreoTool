@@ -103,7 +103,7 @@ function Canvas(props){
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
     const [title, setTitle] = useState(state ? state.title: "");
-    const [numSlides, setNumSlides] = useState(state ? state.formations.length : 1);
+    const [numSlides, setNumSlides] = useState(state ? (state.formations  != 0 ? state.formations.length : 1) : 1);
     const [currSlide, setCurrentSlide] = useState(0);
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
@@ -236,7 +236,9 @@ function Canvas(props){
     }
 
     useEffect(() => {
-        references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
+        if (locations){
+            references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
+        }
     })
 
 

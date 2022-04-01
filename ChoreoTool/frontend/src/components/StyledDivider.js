@@ -9,9 +9,11 @@ const NDivider = styled(Divider)(({
         },
         '&::after':{
             borderTop:"white solid 1px"
-        }
+        },
+    },
+    '&.MuiDivider-root':{
+        borderBottomWidth:"0",
     }
-
 }))
 
 export default function StyledDivider(props){

@@ -11,6 +11,7 @@ export default function Dashboard(props){
     const [hover, toggle] = useState(false);
     const [displayName, setDisplayName] = useState("");
     const [src, setSrc] = useState("");
+    const [loaded, setLoaded] = useState(false);
     const history = useNavigate();
     useEffect(async() => {
         if (!props.status){
@@ -35,11 +36,12 @@ export default function Dashboard(props){
                 setFormations(data.data);
                 console.log(data)
             })
+        setLoaded(true);
     }
 
     return(
         <div>
-        {formations ? 
+        {loaded ? 
             <Box sx={{width:'100%', }}>
                 <Box sx={{my:3, mx: 2}}>
                     <Grid container direction={"row"} alignItems="center">
@@ -64,14 +66,14 @@ export default function Dashboard(props){
                                 height:"100%",
                             }} 
                             elevation="24">
-                                {formations.map((n, i) => {
+                                {formations ? formations.map((n, i) => {
                                     return (
                                         <>
                                             <SelectFormation id={n['id']} formations={n['formations']} title={n['title']}/>
                                             {i != formations.length - 1 ? <StyledDivider borderTop="white solid 1px"/> : ""}
                                         </>
                                     )
-                                })}
+                                }) : "No formations"}
                         </Paper>
                     </Grid>
                 </Grid>
