@@ -48,7 +48,7 @@ export default function Dashboard(props){
                         <Grid item>
                             <Avatar src={src} sx={{ width: 200, height: 200 }}/> 
                         </Grid>
-                        <Grid item xs={10} >
+                        <Grid item xs={10}>
                             <div className="heading">
                                 PROFILE
                             </div>
@@ -64,14 +64,12 @@ export default function Dashboard(props){
                             sx={{
                                 backgroundColor: "#2e2c2c",
                                 height:"100%",
-                            }} 
-                            elevation="24">
+                            }}
+                            elevation={24}>
                                 {formations ? formations.map((n, i) => {
+                                    console.log(n);
                                     return (
-                                        <>
-                                            <SelectFormation id={n['id']} formations={n['formations']} title={n['title']}/>
-                                            {i != formations.length - 1 ? <StyledDivider borderTop="white solid 1px"/> : ""}
-                                        </>
+                                        <SelectFormation key={i} divider={i != formations.length -1} id={n['id']} formations={n['formations']} title={n['title']}/>
                                     )
                                 }) : "No formations"}
                         </Paper>

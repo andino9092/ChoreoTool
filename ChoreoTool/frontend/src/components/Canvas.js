@@ -134,6 +134,11 @@ function Canvas(props){
     // Fix bug with copy last formation
     // *** Deployment with django-heroku
     // Allow tighter formations 
+    // Logout button
+    // Bug with creating empty formation slides
+    // References bugged as well when getting formations from dashboard
+    // Clicking on Create Formation while on canvas received from dashboard
+    // References are bugged as well when adding a person 
 
     const addPerson = async (e) => {
         e.preventDefault();
@@ -160,9 +165,11 @@ function Canvas(props){
     // This is only for 1 formation
     const convertToDB = async () => {
         const data = pieceLocations.map((n) => {
-            return "[" + n.map(i => {
+            console.log(n.length);
+            const res = n.length == 0? "[]" : n.map(i => {
                 return "[" + i[0] + "," + i[1] + "]";
-            }) + "]";
+            });
+            return "[" + res + "]";
         }).join()
         if (!state){
             await fetch("/choreoTool/formations/", {
