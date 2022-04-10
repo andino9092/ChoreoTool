@@ -1,10 +1,12 @@
 import React, { useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login(props){
 
     const [isLoggedIn, logIn] = useState(JSON.parse(window.localStorage.getItem('isLoggedIn') || false));
     const [displayName, setDisplayName] = useState();
-    const [hover, toggle] = useState(false);
+    const history = useNavigate();
+
 
     useEffect(() => {
         logIn(JSON.parse(window.localStorage.getItem('isLoggedIn')));
@@ -17,21 +19,20 @@ export default function Login(props){
     
     useEffect( async () => {
         console.log(isLoggedIn);
-        await fetch("/choreoTool/isAuthenticated")
-        .then((response) => response.json())
-        .then((data) => {
-            logIn(data.status);
-            toggle(false);
-            props.onLogIn(data.status);
-            console.log(isLoggedIn);
-        });
+            await fetch("/choreoTool/isAuthenticated")
+            .then((response) => response.json())
+            .then((data) => {
+                logIn(data.status);
+                props.onLogIn(data.status);
+                console.log(isLoggedIn);
+            });
     }, [isLoggedIn]);
     
     useEffect(async() => {
-        if (!displayName){
+        if (isLoggedIn){
             await getData();
         }
-    })
+    }, [isLoggedIn])
     
     const getData = async () => {
         await fetch("choreoTool/getUsers")
@@ -53,30 +54,17 @@ export default function Login(props){
         }
     }
 
-    const btn = {
-        borderRadius: "40px",
-        backgroundColor: hover ? "white" : "green",
-        color: "black",
-        overflow: "hidden",
-        fontSize: "20px",
-        border: hover ? "white 5px" : "none",
-        transform: hover ? "scale(1.1)" : "none",
-        transitionDuration: ".1s",
-        cursor: "pointer",
-        paddingLeft: "40px",
-        paddingRight: "40px",
-    }
-
-    const handleHover = () => {
-        if (!isLoggedIn){
-            toggle(!hover);
-        }
+    const logOut = async () => {
+        await fetch("choreoTool/logout")
+            .then(response => response.json)
+        props.onLogIn(false);
+        logIn(false);
+        history("/infoPage");
     }
 
     return (
         <div>
-            {isLoggedIn ? <div className="nav-link">{displayName}</div> : <div className="nav-link" style={btn} onMouseEnter={handleHover}
-            onMouseLeave={handleHover} onClick={handleLogin}>Log In</div>}
+            {isLoggedIn ? <div id="myBtn" className="nav-link myBtn"  onClick={logOut}>Log Out</div> : <div id="myBtn" className="nav-link myBtn" onClick={handleLogin}>Log In</div>}
         </div>
     )
 }

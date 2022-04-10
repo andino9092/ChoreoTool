@@ -10,5 +10,6 @@ urlpatterns = [
     path('getTokens/', views.getTokens),
     path('getAllUsers/', views.getAllUsers),
     path('formations/', views.formations),
+    path('logout/', views.LogOut),
     path('test', views.test),
 ]

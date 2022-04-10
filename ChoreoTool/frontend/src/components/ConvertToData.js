@@ -4,7 +4,11 @@ export default function convertToData(input){
     while(data.indexOf(']]') != -1){
         var res = [];
         var page = data.substring(data.indexOf('[') + 1, data.indexOf(']]')+1);
+        console.log(page);
         while(page.indexOf('[') != -1){
+            if (page == "[]"){
+                break;
+            }
             var left = page.indexOf('[');
             var right = page.indexOf(']');
             var pos = page.substring(left + 1, right).split(',').map(n => parseInt(n));

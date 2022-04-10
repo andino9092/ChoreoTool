@@ -120,6 +120,7 @@ function Canvas(props){
     const history = useNavigate();
 
     // Have a scale version that opens a page that allows you to see everything
+    // Have Name displayed and logout panel
     // Musix Match for lyrics
     // Find fix for not beign able to close after clicking backdrop
     // Stage Front label
@@ -135,10 +136,14 @@ function Canvas(props){
     // *** Deployment with django-heroku
     // Allow tighter formations 
     // Logout button
-    // Bug with creating empty formation slides
     // References bugged as well when getting formations from dashboard
     // Clicking on Create Formation while on canvas received from dashboard
-    // References are bugged as well when adding a person 
+    // References are bugged as well when adding a person, references are not unique either
+    //      Problem is the new people arent rendering to their next position cause they have no prev position
+    // Solution: guided formation making
+    //      Before rendering Canvas, ask for total # of people and # of people on stage and # of ppl backstage
+    //      If you need to add in a new person, it would add that person backstage, and then it would have to manually change their place for all the formations
+    //      This way, it keeps track of everyones positions and the references wouldn't change
 
     const addPerson = async (e) => {
         e.preventDefault();
@@ -165,7 +170,6 @@ function Canvas(props){
     // This is only for 1 formation
     const convertToDB = async () => {
         const data = pieceLocations.map((n) => {
-            console.log(n.length);
             const res = n.length == 0? "[]" : n.map(i => {
                 return "[" + i[0] + "," + i[1] + "]";
             });
@@ -233,7 +237,7 @@ function Canvas(props){
         const yRe = y % (cHeight / verticalSections / 2);
         x = (cWidth / horizontalSections / 2) - xRe < xRe ? x + ((cWidth / horizontalSections / 2) - xRe): x - xRe;
         y = (cHeight / verticalSections / 2) - yRe < yRe ? y + ((cHeight / verticalSections / 2)- yRe): y - yRe;
-        references.current[id].current.to({
+        references.current[id]?.current.to({
             x: x,
             y: y,
         });
@@ -244,8 +248,12 @@ function Canvas(props){
 
     useEffect(() => {
         if (locations){
-            references.current=Array(locations.length).fill().map((_, i) => references.current[i] || createRef());
+            console.log(references);
+            references.current=Array(locations.length).fill().map((_, i) => 
+            references.current[i] || createRef());
+            console.log(references);
         }
+        
     })
 
 
@@ -302,8 +310,8 @@ function Canvas(props){
             const data = pieceLocations[currSlide+1][i];
             const nextX = data ? data[0] : null;
             const nextY = data ? data[1] : null;
-            console.log(references.current[i].current);
-            references.current[i].current.to({
+            
+            references.current[i]?.current.to({
                 y: nextY,
                 x: nextX,
             })
@@ -322,12 +330,8 @@ function Canvas(props){
             const data = pieceLocations[currSlide-1][i];
             const prevX = data ? data[0] : null;
             const prevY = data ? data[1] : null;
-            if (!prevX){
-                references.current[i].current.x = null;
-                references.current[i].current.y = null;
-                continue;
-            }
-            references.current[i].current.to({
+
+            references.current[i]?.current.to({
                 y: prevY,
                 x: prevX,
             })

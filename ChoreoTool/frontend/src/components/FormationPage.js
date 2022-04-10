@@ -11,7 +11,6 @@ const FormationPage = forwardRef((props, ref) => {
 
     useEffect(() => {
         setCurrLocation(props.locations);
-        console.log(props)
     })
 
     useEffect(() => {

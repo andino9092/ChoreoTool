@@ -73,7 +73,13 @@ def IsAuthenticated(request, format = None):
         expires = tokens.expires_in
         return Response({'status': is_authenticate, 'expires':expires}, status.HTTP_200_OK)
     return Response({'status': is_authenticate}, status.HTTP_200_OK)
-    
+
+@api_view(['GET'])
+def LogOut(request, format = None):
+    tokens = get_user_tokens(request.session.session_key)
+    tokens.delete()
+    return Response({'status': False}, status.HTTP_200_OK)
+
 @api_view(['GET'])
 def getUsers(request):
     userTokens = get_user_tokens(request.session.session_key)
