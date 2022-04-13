@@ -6,7 +6,7 @@ import StyledButton from "./StyledButton";
 import { Box } from "@mui/material";
 import StyledText from "./StyledText";
 import StyledTitle from "./StyledTitle";
-
+import "./style.css"
 
 export default function CreateFormationSlide(props){
 
@@ -26,20 +26,29 @@ export default function CreateFormationSlide(props){
             {showButton && (
                 <Box sx={{my: 2, justifyContent: "center", alignItems:"center", display:"flex"}}>
                     <StyledTitle variant="standard" placeholder="# of Performers" onChange={handleTextField}/>
-                    <StyledButton onClick={() => setShowCanvas(true)} text="Click to Enter"/>
+                    <StyledButton onClick={() => {
+                        setShowCanvas(true)}} text="Click to Enter"/>
+                        <Box>
+                            {console.log(Array(numppl))}
+                            {numppl > 0 ? 
+                                Array(numppl).fill().map((n, i) => 
+                                        <StyledText text={n} key={i}/>
+                                    
+                                )
+                            :""}
+                        </Box>
                 </Box>
             )}
             <div>
                 <CSSTransition 
                     in={showCanvas} 
-                    timeout={300}
-                    classNames="my-node"
+                    timeout={1000}
+                    classNames="canvas"
                     unmountOnExit
                     onEnter={() => setShowButton(false)}
                     onExited={() => setShowButton(true)}
                     >
                         <div>
-                            {/* <StyledButton onClick={() => setShowCanvas(false)} text="Close"/> */}
                             <Canvas isLoggedIn={props.isLoggedIn}/>
                         </div>
                 </CSSTransition>

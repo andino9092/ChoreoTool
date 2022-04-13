@@ -1,0 +1,7 @@
+.canvas-enter {
+    transform: translateX(100%);
+}
+.canvas-enter-active {
+    transform: translateX(0);
+    transition: 500ms ease-in;
+}
