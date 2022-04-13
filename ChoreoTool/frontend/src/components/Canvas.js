@@ -8,6 +8,7 @@ import StyledText from "./StyledText";
 import StyledButton from "./StyledButton";
 import FormationPage from "./FormationPage";
 import StyledDivider from "./StyledDivider";
+import StyledTitle from "./StyledTitle";
 import {styled} from "@mui/material/styles"
 
 const StyledDialog = styled(Dialog)(({
@@ -50,43 +51,6 @@ const StyledDrawer = styled(Drawer)(({
             backgroundColor: "#1E1C1C",
             width: "250px",
         },
-    }
-}))
-
-const TitleStyle = styled(TextField)(({
-    
-    '& label.Mui-focused':{
-        color: "white",
-    },
-
-    '& label':{
-        color: "white",
-    },
-
-    '& .MuiInputBase-formControl':{
-
-        borderBottom: "None",
-
-        
-        '& .MuiInputBase-input': {
-            color: "white",
-            textAlign: "center",
-            fontSize: "40px",
-            letterSpacing: "4px",
-        },
-        '&::before':{
-            borderBottom: "None",
-        },
-        '&::after':{
-            borderBottom: "white solid 2px",
-        }
-      
-
-    },
-    '&.MuiTextField-root':{
-        display: "block",
-        alignItems: "center",
-        textAlign: "center",
     }
 }))
 
@@ -343,7 +307,7 @@ function Canvas(props){
     return (
         <div>
             <Box sx={{my: 2, mx: 1, alignItems:"center", justifyContent:"center"}}>
-                <TitleStyle variant="standard" name="title" placeholder="Title" value={title} onChange={handleTextField}></TitleStyle>
+                <StyledTitle variant="standard" name="title" placeholder="Title" value={title} onChange={handleTextField}/>
                 <div style={{display:"flex", justifyContent: "right", marginRight:"18.75%"}}>
                     <StyledButton onClick={convertToDB} text="Save" width="10%"></StyledButton>
                 </div>
@@ -394,7 +358,7 @@ function Canvas(props){
             </Box>
             <StyledDrawer
                 anchor="right"
-                open={true}
+                open={drawerOpen}
                 onClose={handleDrawer}
                 onOpen={handleDrawer}
                 variant="persistent">
