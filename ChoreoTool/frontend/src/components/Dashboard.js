@@ -4,6 +4,7 @@ import { Grid, Box, Avatar, Paper, Divider} from "@mui/material";
 import StyledDivider from "./StyledDivider";
 import Loading from "./Loading";
 import SelectFormation from "./SelectFormation";
+import ListCompressor from "./ListCompressor";
 
 export default function Dashboard(props){
 
@@ -66,12 +67,13 @@ export default function Dashboard(props){
                                 height:"100%",
                             }}
                             elevation={24}>
-                                {formations ? formations.map((n, i) => {
-                                    console.log(n);
-                                    return (
-                                        <SelectFormation key={i} divider={i != formations.length -1} id={n['id']} formations={n['formations']} title={n['title']}/>
-                                    )
-                                }) : "No formations"}
+                                
+                                {formations ? 
+                                    <ListCompressor
+                                        type="SelectFormation"
+                                        formations={formations}
+                                    /> : 
+                                    "No formations"}
                         </Paper>
                     </Grid>
                 </Grid>

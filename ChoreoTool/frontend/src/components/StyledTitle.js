@@ -16,7 +16,6 @@ const TitleStyle = styled(TextField)(({
 
         borderBottom: "None",
 
-        
         '& .MuiInputBase-input': {
             color: "white",
             textAlign: "center",
@@ -36,6 +35,9 @@ const TitleStyle = styled(TextField)(({
         display: "block",
         alignItems: "center",
         textAlign: "center",
+        '& .Mui-focused input::placeholder':{
+            color:"transparent",
+        },
     }
 }))
 

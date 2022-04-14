@@ -84,9 +84,9 @@ function Canvas(props){
     const history = useNavigate();
 
     // Have a scale version that opens a page that allows you to see everything
-    // Have Name displayed and logout panel
+    // Have Name displayed and logout Panel bar, one with down array and lists some settings
     // Musix Match for lyrics
-    // Find fix for not beign able to close after clicking backdrop
+    // Find fix for not beign able to close after clicking backdrop for drawer
     // Stage Front label
     // Add error handling for text fields
     // Add await and async functions to Login button
@@ -99,9 +99,10 @@ function Canvas(props){
     // Fix bug with copy last formation
     // *** Deployment with django-heroku
     // Allow tighter formations 
-    // Logout button
+    // DONE Logout button 
+
     // References bugged as well when getting formations from dashboard
-    // Clicking on Create Formation while on canvas received from dashboard
+    // Clicking on Create Formation while on canvas received from dashboard doesnt go to a new canvas
     // References are bugged as well when adding a person, references are not unique either
     //      Problem is the new people arent rendering to their next position cause they have no prev position
     // Solution: guided formation making

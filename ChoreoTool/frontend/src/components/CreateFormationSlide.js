@@ -4,8 +4,8 @@ import {CSSTransition} from "react-transition-group"
 import Canvas from "./Canvas";
 import StyledButton from "./StyledButton";
 import { Box } from "@mui/material";
-import StyledText from "./StyledText";
-import StyledTitle from "./StyledTitle";
+import ListCompressor from "./ListCompressor";
+import StyledTextForm from "./StyledTextForm";
 import "./style.css"
 
 export default function CreateFormationSlide(props){
@@ -18,25 +18,31 @@ export default function CreateFormationSlide(props){
     // Song informaiton and lyrics(maybe) might be here
 
     const handleTextField = (e) => {
-        setNumPpl(e.target.value);
+        console.log(e.target.type)
+        if (e.target.type === 'text' && e.target.value){
+            setNumPpl(parseInt(e.target.value));
+        }
+        else{
+            setNumPpl(0);
+        }
     }
+
+    useEffect(() => {
+        console.log(numppl);
+        console.log(Array(numppl).fill(0).length);
+    },[numppl])
 
     return(
         <div>
             {showButton && (
-                <Box sx={{my: 2, justifyContent: "center", alignItems:"center", display:"flex"}}>
-                    <StyledTitle variant="standard" placeholder="# of Performers" onChange={handleTextField}/>
-                    <StyledButton onClick={() => {
-                        setShowCanvas(true)}} text="Click to Enter"/>
-                        <Box>
-                            {console.log(Array(numppl))}
-                            {numppl > 0 ? 
-                                Array(numppl).fill().map((n, i) => 
-                                        <StyledText text={n} key={i}/>
-                                    
-                                )
-                            :""}
-                        </Box>
+                <Box sx={{my: 2, mx:1, justifyContent: "center", alignItems:"center"}} bottom="0px">
+                    <StyledTextForm variant="standard" size="2" placeholder="# of Performers" onChange={handleTextField} value={numppl == 0 ? "" : numppl}/>
+                    <Box>
+                        <ListCompressor type="StyledTextForm" numppl={numppl}/>
+                    </Box>
+                    <div style={{display:"flex", justifyContent: "right", marginRight:"18.75%"}}>
+                        <StyledButton onClick={() => {setShowCanvas(true)}} text="Continue" width="10%"></StyledButton>
+                    </div>
                 </Box>
             )}
             <div>

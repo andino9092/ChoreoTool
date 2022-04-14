@@ -34,19 +34,6 @@
     font-size: 20px;
 }
 
-body { 
-    min-height: 100vh; 
-    background-image: linear-gradient(to bottom right, rgb(73, 66, 66), black);
-}
-
-
-.spotify{
-    background-image: linear-gradient(to bottom right, rgb(73, 66, 66), black);
-    color: white;
-    font-family: "Circular Std";
-    font-weight: lighter;
-}
-
 .align{
     display: table-cell;
     vertical-align: middle;
@@ -118,14 +105,6 @@ a:hover{
 
 .fa-spotify:hover{
     color: green;
-}
-
-div.footer{
-    width: 200px;
-    display: block;
-    margin: 0 auto;
-    padding-bottom: 20px;
-    margin-top: 5%;
 }
 
 ul.icons{
