@@ -89,7 +89,7 @@ function Canvas(props){
     // Find fix for not beign able to close after clicking backdrop for drawer
     // Stage Front label
     // Add error handling for text fields
-    // Add await and async functions to Login button
+    // DONE Add await and async functions to Login button
     // Have no internet state
     // Check to see if drawer doesnt close outside click because its in Canvas rather than CreateFormationSlide
     // Choosing slide 
@@ -99,6 +99,9 @@ function Canvas(props){
     // Fix bug with copy last formation
     // *** Deployment with django-heroku
     // Allow tighter formations 
+    // Add animation to the icons at the bottom in case of extensions
+    // Fix transitions from form to canvas, add animation to continue button
+
     // DONE Logout button 
 
     // References bugged as well when getting formations from dashboard

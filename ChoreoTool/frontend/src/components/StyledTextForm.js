@@ -12,6 +12,7 @@ export default function StyledTextForm(props){
                 variant={props.variant}
                 placeholder={props.placeholder}
                 size={props.size}
+                error={props.error}
                 sx={{
                     display:"flex",
                     justifyContent:"center",
@@ -23,11 +24,8 @@ export default function StyledTextForm(props){
             </StyledTextField>
 }
 
-const StyledTextField = styled(TextField)((({size}) => ({
+const StyledTextField = styled(TextField)((({size, error}) => ({
     '&.MuiTextField-root':{
-        '& .MuiFormLabel-colorPrimary':{
-            color: "white",
-        },
         '& .MuiInputBase-input':{
             color:"white",
             textAlign:"center",
@@ -37,19 +35,15 @@ const StyledTextField = styled(TextField)((({size}) => ({
             color:"transparent",
         },
         '& .MuiInputBase-formControl':{
-            borderBottom:"2px white",
-            '& .Mui-focused input::placeholder':{
-                color:"transparent",
-            },
             '&:hover:not(.Mui-disabled):before':{
                 borderBottom:"white solid 2px",
             },
             '&::before':{
-                borderBottom:"green solid 2px",
+                borderBottom: (error ? "red" : "green") + " solid 2px",
             },
             '&::after':{
-                borderBottom: "green solid 2px"
-            }
-        }
+                borderBottom: (error ? "red" : "white") + " solid 2px",
+            },
+        },
     }
 })))
