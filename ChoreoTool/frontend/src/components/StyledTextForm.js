@@ -13,6 +13,7 @@ export default function StyledTextForm(props){
                 placeholder={props.placeholder}
                 size={props.size}
                 error={props.error}
+                value={props.value}
                 sx={{
                     display:"flex",
                     justifyContent:"center",
