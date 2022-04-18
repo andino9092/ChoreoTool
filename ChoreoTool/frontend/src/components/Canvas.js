@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, createRef} from "react";
+import React, { useEffect, useRef, useState, createRef, useCallback} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
@@ -59,10 +59,37 @@ function Canvas(props){
     const {state} = useLocation();
     const {classes} = props;
 
+
+    const verticalSections = 5;
+    const horizontalSections = 8;
+    const cWidth = 900;
+    const cHeight = 500;
+    const column = cWidth / horizontalSections;
+    const row = cHeight / verticalSections;
+
+    const initialLocations = () => {
+        var res = [];
+        const xInc = cWidth / horizontalSections / 2;
+        const yInc = cHeight / verticalSections / 2;
+        const numRows = cHeight / yInc - 1;
+        const numCols = props.names.length / numRows;
+        var ppl = props.names.length;
+        for (var i = 0; i < numCols; i++){
+            var pplInCol = numRows;
+            if (ppl / numRows < 1){
+                pplInCol = ppl;
+            }
+            for (var m = 0; m < pplInCol; m++){
+                res.push([xInc * (i + 1), yInc * (m + 1)]);
+            }
+            ppl -= pplInCol;
+        }
+        return res;
+    };
+
     const [numPeople, setPeople] = useState(0);
-    const [locations, setLocations] = useState(state ? state.formations[0] : []); // Current slide locations
-    const [pieceLocations, setPieceLocations] = useState(state ? state.formations : [[]]);
-    const [titles, setTitles] = useState([]);
+    const [locations, setLocations] = useState(state ? state.formations[0] : initialLocations()) // Current slide locations
+    const [pieceLocations, setPieceLocations] = useState(state ? state.formations : [initialLocations()]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
@@ -74,12 +101,6 @@ function Canvas(props){
     const [disableBack, setDisableBack] = useState(true);
     const [formationPage, setFormationpage] = useState();
 
-    const verticalSections = 5;
-    const horizontalSections = 8;
-    const cWidth = 900;
-    const cHeight = 500;
-    const column = cWidth / horizontalSections;
-    const row = cHeight / verticalSections;
     const references = useRef([]);
     const history = useNavigate();
 
@@ -200,7 +221,7 @@ function Canvas(props){
         toggleDrawer(!drawerOpen);
     }
 
-    const onDrag = async (id, x, y) => {
+    const onDrag = (id, x, y) => {
         const xRe = x % (cWidth / horizontalSections / 2);
         const yRe = y % (cHeight / verticalSections / 2);
         x = (cWidth / horizontalSections / 2) - xRe < xRe ? x + ((cWidth / horizontalSections / 2) - xRe): x - xRe;
@@ -209,21 +230,24 @@ function Canvas(props){
             x: x,
             y: y,
         });
+        references.current[id]?.current.parent.children[0].to({
+            x:x,
+            y:y,
+        })
         setLocations(locations.map((n, i) => {
+            console.log(i, id);
             return i == id ? [x, y] : n;
         }))
     }
 
     useEffect(() => {
-        if (locations){
-            console.log(references);
-            references.current=Array(locations.length).fill().map((_, i) => 
+        references.current=Array(props.names.length).fill().map((_, i) => 
             references.current[i] || createRef());
-            console.log(references);
-        }
-        
-    })
+    }, [props.names])
 
+    useEffect(() => {
+        console.log(locations);
+    })
 
     useEffect(async () => {
         if (currSlide == 0){
@@ -234,9 +258,14 @@ function Canvas(props){
         }
     }, [currSlide]);
 
-    useEffect(async() => {
+    useEffect(() => {
         setFormationpage(renderFormationPage());
-    }, [numPeople, currSlide])
+    }, [numPeople, currSlide, locations])
+
+
+    useEffect(() => {
+        console.log(references);
+    })
 
     useEffect(async () => {
         setPieceLocations(pieceLocations.map((n, i) => {
@@ -252,6 +281,7 @@ function Canvas(props){
     const renderFormationPage = () => {
         return (<FormationPage 
             ref={references}
+            names={props.names}
             new={state ? false: true}
             cWidth={cWidth} 
             cHeight={cHeight}

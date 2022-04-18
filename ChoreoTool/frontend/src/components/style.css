@@ -70,7 +70,7 @@ body{
 }
 .name-enter-active {
     opacity: 1;
-transition: opacity 500ms ease-in;
+    transition: opacity 500ms ease-in;
 }
 .name-exit {
     opacity: 1;

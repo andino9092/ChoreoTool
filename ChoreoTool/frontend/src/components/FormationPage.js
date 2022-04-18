@@ -1,12 +1,13 @@
 import React, { useEffect} from "react"
 import { useState, forwardRef} from "react";
-import { Stage, Shape, Layer } from "react-konva";
+import { Stage, Shape, Layer, Text} from "react-konva";
 import Person from "./Person";
 
 const FormationPage = forwardRef((props, ref) => {
 
     const [currLocation, setCurrLocation] = useState(props.locations);
     const [people, setPeople] = useState();
+
     const references = ref
 
     useEffect(() => {
@@ -22,6 +23,7 @@ const FormationPage = forwardRef((props, ref) => {
     const renderPeople = () => {
         return currLocation.map((n, index) => {
             const res = <Person 
+                        name={props.names[index]}
                         draggable={true}
                         hovering={true}
                         ref={references.current[index]}
@@ -31,7 +33,7 @@ const FormationPage = forwardRef((props, ref) => {
                         x={n[0]} 
                         y={n[1]}
                         size={10}
-                    ></Person>
+                    />
             return res;    
             }
 

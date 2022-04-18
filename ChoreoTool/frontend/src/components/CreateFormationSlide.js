@@ -1,12 +1,13 @@
-import { Scale } from "@mui/icons-material";
 import React, {useState, useEffect} from "react";
-import {CSSTransition, TransitionGroup} from "react-transition-group"
+import {CSSTransition} from "react-transition-group"
 import Canvas from "./Canvas";
 import StyledButton from "./StyledButton";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Step} from "@mui/material";
 import ListCompressor from "./ListCompressor";
 import StyledTextForm from "./StyledTextForm";
 import "./style.css"
+
+const steps = ["Number of Performers", "Names and Colors"]
 
 export default function CreateFormationSlide(props){
 
@@ -15,6 +16,7 @@ export default function CreateFormationSlide(props){
     const [showButton, setShowButton] = useState(true);
     const [error, setError] = useState(false);
     const [numppl, setNumPpl] = useState(0);
+    const [names, setNames] = useState([]);
 
     // Song informaiton and lyrics(maybe) might be here
 
@@ -37,6 +39,16 @@ export default function CreateFormationSlide(props){
         }
     }
 
+    const handleNames = (names) => {
+        setNames(names);
+    }
+
+    const renderCanvas = () => {
+        return (
+            <Canvas isLoggedIn={props.isLoggedIn} names={names}/>
+        )
+    }
+
     useEffect(() => {
         console.log(numppl);
         console.log(Array(numppl).fill(0).length);
@@ -49,13 +61,11 @@ export default function CreateFormationSlide(props){
                     timeout={1000}
                     classNames="formationForm"
                     unmountOnExit
-
                 >
                     <Box sx={{my: 2, mx:1, justifyContent: "center", alignItems:"center"}} bottom="0px">
                         <StyledTextForm error={error} variant="standard" size="2" placeholder="# of Performers" onChange={handleTextField} value={numppl == 0 ? "" : numppl}/>
                         <Box>
-                            {console.log(numppl)}
-                            <ListCompressor type="StyledTextForm" numppl={numppl}/>
+                            <ListCompressor type="StyledTextForm" numppl={numppl} handleNames={handleNames}/>
                         </Box>
                         <div style={{display:"flex", justifyContent: "right", marginRight:"18.75%"}}>
                             <StyledButton disabled={numppl <= 0} onClick={() => {setShowCanvas(true);setShowButton(false)}} text="Continue" width="10%"></StyledButton>
@@ -70,7 +80,7 @@ export default function CreateFormationSlide(props){
                 >
                     <div>
                         {/* <StyledButton onClick={() => {setShowButton(true); setShowCanvas(false)}} text="Back"/> */}
-                        <Canvas isLoggedIn={props.isLoggedIn}/>
+                        {renderCanvas()}
                     </div>
             </CSSTransition>
         </div>

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useImperativeHandle} from "react";
+import React, { useEffect, useRef, useImperativeHandle, useCallback} from "react";
 import {Spring, useSpring, animated} from "@react-spring/konva"
 import { useState, forwardRef} from "react";
-import { Circle } from "react-konva";
+import { Circle, Text, Group} from "react-konva";
 
 const Person = forwardRef((props, ref) => {
     const [id, setId] = useState(props.id);
@@ -10,33 +10,57 @@ const Person = forwardRef((props, ref) => {
     const [hover, toggleHover] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [flag, setFlag] = useState(false);
-    const circ = useRef();
+    const [showName, toggleNames] = useState(false);
 
     const handleHover = () => {
         toggleHover(!hover);
     }
 
-    return(
-      <Circle 
-          draggable={props.draggable}
-          ref={ref}
-          radius={props.size} 
-          fill="green" 
-          x={x} y={y} 
-          strokeWidth={hover ? 2: 0}
-          stroke="black"
-          onMouseEnter={props.hovering ? handleHover: ""}
-          onMouseLeave={props.hovering ? handleHover: ""}
-          onDragStart={() => {
-              setIsDragging(true);
-            }}
-          onDragEnd={e => {
-              setIsDragging(false);
-              props.onDrag(id, e.target.x(), e.target.y());
-            }}
-          >
+    const handleKeyPress = useCallback((e) => {
+      if(e.key === "`"){
+        toggleNames(!showName);
+        console.log(!showName);
+      }
+    }, []);
+  
+    useEffect(() => {
+      // attach the event listener
+      document.addEventListener('keydown', handleKeyPress);
+  
+      // remove the event listener
+      return () => {
+        document.removeEventListener('keydown', handleKeyPress);
+      };
+    }, [handleKeyPress]);
 
-       </Circle>
+    useEffect(() => {
+      console.log(showName);
+    })
+
+    return(
+      <Group>
+        <Text opacity={showName ? 1 : 0} text="Helo" x={x} y={y-10}/>
+        <Circle 
+            draggable={props.draggable}
+            ref={ref}
+            radius={props.size} 
+            fill="green" 
+            x={x} y={y} 
+            strokeWidth={hover ? 2: 0}
+            stroke="black"
+            onMouseEnter={props.hovering ? handleHover: ""}
+            onMouseLeave={props.hovering ? handleHover: ""}
+            onDragStart={() => {
+                setIsDragging(true);
+              }}
+            onDragEnd={e => {
+                setIsDragging(false);
+                props.onDrag(id, e.target.x(), e.target.y());
+                console.log(x, y);
+              }}
+            >
+        </Circle>
+      </Group>
        
     )
 })
