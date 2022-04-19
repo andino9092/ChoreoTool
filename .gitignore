@@ -1,4 +1,5 @@
 venv
 ChoreoTool/frontend/node_modules
 ChoreoTool/node_modules
+ChoreoTool/backend/ChoreoTool/.env
 get-pip.py
