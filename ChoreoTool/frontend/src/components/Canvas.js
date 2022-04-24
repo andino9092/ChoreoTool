@@ -56,7 +56,6 @@ const StyledDrawer = styled(Drawer)(({
 
 function Canvas(props){
 
-    const {state} = useLocation();
     const {classes} = props;
 
 
@@ -88,13 +87,13 @@ function Canvas(props){
     };
 
     const [numPeople, setPeople] = useState(0);
-    const [locations, setLocations] = useState(state ? state.formations[0] : initialLocations()) // Current slide locations
-    const [pieceLocations, setPieceLocations] = useState(state ? state.formations : [initialLocations()]);
+    const [locations, setLocations] = useState(props.state ? props.state.formations[0] : initialLocations()) // Current slide locations
+    const [pieceLocations, setPieceLocations] = useState(props.state ? props.state.formations : [initialLocations()]);
     const [drawerOpen, toggleDrawer] = useState(false);
     const [rowText, setRow] = useState("");
     const [colText, setCol] = useState("");
-    const [title, setTitle] = useState(state ? state.title: "");
-    const [numSlides, setNumSlides] = useState(state ? (state.formations  != 0 ? state.formations.length : 1) : 1);
+    const [title, setTitle] = useState(props.state ? props.state.title: "");
+    const [numSlides, setNumSlides] = useState(props.state ? (props.state.formations  != 0 ? props.state.formations.length : 1) : 1);
     const [currSlide, setCurrentSlide] = useState(0);
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
@@ -164,7 +163,7 @@ function Canvas(props){
             });
             return "[" + res + "]";
         }).join()
-        if (!state){
+        if (!props.state){
             await fetch("/choreoTool/formations/", {
                 credentials: "include",
                 method: "POST",
@@ -191,7 +190,7 @@ function Canvas(props){
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    id: state.id,
+                    id: props.state.id,
                     title: title,
                     formations: data,
                 })
@@ -241,9 +240,10 @@ function Canvas(props){
     }
 
     useEffect(() => {
-        references.current=Array(props.names.length).fill().map((_, i) => 
+        references.current=Array(props.state ? locations.length : props.names.length).fill().map((_, i) => 
             references.current[i] || createRef());
-    }, [props.names])
+        console.log(references);
+    })
 
     useEffect(() => {
         console.log(locations);
@@ -260,12 +260,7 @@ function Canvas(props){
 
     useEffect(() => {
         setFormationpage(renderFormationPage());
-    }, [numPeople, currSlide, locations])
-
-
-    useEffect(() => {
-        console.log(references);
-    })
+    }, [numPeople, currSlide, locations, props.state])
 
     useEffect(async () => {
         setPieceLocations(pieceLocations.map((n, i) => {
@@ -282,7 +277,7 @@ function Canvas(props){
         return (<FormationPage 
             ref={references}
             names={props.names}
-            new={state ? false: true}
+            new={props.state ? false: true}
             cWidth={cWidth} 
             cHeight={cHeight}
             locations={locations}

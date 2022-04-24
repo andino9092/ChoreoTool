@@ -5,20 +5,27 @@ import StyledButton from "./StyledButton";
 import { Box, Grid, Step} from "@mui/material";
 import ListCompressor from "./ListCompressor";
 import StyledTextForm from "./StyledTextForm";
+import { useLocation } from "react-router-dom";
 import "./style.css"
 
 const steps = ["Number of Performers", "Names and Colors"]
 
 export default function CreateFormationSlide(props){
 
+    const {state} = useLocation();
+
     const [pages, setPages] = useState(0);
-    const [showCanvas, setShowCanvas] = useState(false);
-    const [showButton, setShowButton] = useState(true);
+    const [showCanvas, setShowCanvas] = useState(state ? true : false);
+    const [showButton, setShowButton] = useState(state ? false : true);
     const [error, setError] = useState(false);
     const [numppl, setNumPpl] = useState(0);
     const [names, setNames] = useState([]);
 
     // Song informaiton and lyrics(maybe) might be here
+    
+    useEffect(() => {
+        console.log(state);
+    })
 
     const handleTextField = (e) => {
         console.log(e.target.value == "")
@@ -45,7 +52,7 @@ export default function CreateFormationSlide(props){
 
     const renderCanvas = () => {
         return (
-            <Canvas isLoggedIn={props.isLoggedIn} names={names}/>
+            <Canvas isLoggedIn={props.isLoggedIn} names={names} state={state}/>
         )
     }
 

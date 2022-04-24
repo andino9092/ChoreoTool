@@ -39,7 +39,7 @@ const Person = forwardRef((props, ref) => {
 
     return(
       <Group>
-        <Text opacity={showName ? 1 : 0} text="Helo" x={x} y={y-10}/>
+        <Text opacity={showName ? 1 : 0} text={props.name} x={x} y={y-10}/>
         <Circle 
             draggable={props.draggable}
             ref={ref}
