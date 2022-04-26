@@ -1,6 +1,9 @@
 # ChoreoTool
 A staging tool for choreographers and performers using Spotify API.
 
+[Quick Demo]
+(https://youtu.be/Vc5BiWasicU)
+
 Relevant Tools:
   - Python, JavaScript, HTML, CSS
   - React, Django, Django REST, Webpack, Material UI
