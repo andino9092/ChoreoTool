@@ -23,6 +23,7 @@ const FormationPage = forwardRef((props, ref) => {
     const renderPeople = () => {
         return currLocation.map((n, index) => {
             const res = <Person 
+                        showName={props.showName}
                         name={props.names[index]}
                         draggable={true}
                         hovering={true}

@@ -10,36 +10,15 @@ const Person = forwardRef((props, ref) => {
     const [hover, toggleHover] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [flag, setFlag] = useState(false);
-    const [showName, toggleNames] = useState(false);
+    const pRef = useRef();
 
     const handleHover = () => {
         toggleHover(!hover);
     }
-
-    const handleKeyPress = useCallback((e) => {
-      if(e.key === "`"){
-        toggleNames(!showName);
-        console.log(!showName);
-      }
-    }, []);
-  
-    useEffect(() => {
-      // attach the event listener
-      document.addEventListener('keydown', handleKeyPress);
-  
-      // remove the event listener
-      return () => {
-        document.removeEventListener('keydown', handleKeyPress);
-      };
-    }, [handleKeyPress]);
-
-    useEffect(() => {
-      console.log(showName);
-    })
-
+    
     return(
       <Group>
-        <Text opacity={showName ? 1 : 0} text={props.name} x={x} y={y-10}/>
+        <Text opacity={props.showName ? 1 : 0} text={props.name} x={x} y={y-10}/>
         <Circle 
             draggable={props.draggable}
             ref={ref}

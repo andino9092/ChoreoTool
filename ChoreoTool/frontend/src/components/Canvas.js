@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, createRef, useCallback} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle} from "@mui/material";
+import {Dialog, IconButton, Drawer, TextField, Box, Divider, Grid, Checkbox, FormControlLabel, FormGroup, DialogTitle, Switch} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -10,6 +10,7 @@ import FormationPage from "./FormationPage";
 import StyledDivider from "./StyledDivider";
 import StyledTitle from "./StyledTitle";
 import {styled} from "@mui/material/styles"
+import { green } from "@mui/material/colors";
 
 const StyledDialog = styled(Dialog)(({
     '&.MuiDialog-root':{
@@ -18,18 +19,6 @@ const StyledDialog = styled(Dialog)(({
                 backgroundColor:"#1E1C1C",
                 color:"white",
             }
-        }
-    }
-}))
-
-const StyledCheckbox = styled(Checkbox)(({
-    '&.PrivateSwitchBase-root':{
-        color:"green",
-        '&:hover':{
-            color:"white",
-        },
-        '&:focus':{
-            outline:"None",
         }
     }
 }))
@@ -52,6 +41,18 @@ const StyledDrawer = styled(Drawer)(({
             width: "250px",
         },
     }
+}))
+
+const StyledSwitch = styled(Switch)(({
+    '& .MuiSwitch-switchBase.Mui-checked': {
+            color: "green",
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+        backgroundColor: "green",
+    },
+    '& .MuiSwitch-track': {
+        backgroundColor: "grey",
+    },
 }))
 
 function Canvas(props){
@@ -99,6 +100,7 @@ function Canvas(props){
     const [dialogOpen, toggleDialogOpen] = useState(false);
     const [disableBack, setDisableBack] = useState(true);
     const [formationPage, setFormationpage] = useState();
+    const [showName, toggleNames] = useState(false);
 
     const references = useRef([]);
     const history = useNavigate();
@@ -247,6 +249,7 @@ function Canvas(props){
 
     useEffect(() => {
         console.log(locations);
+        console.log(showName);
     })
 
     useEffect(async () => {
@@ -260,14 +263,14 @@ function Canvas(props){
 
     useEffect(() => {
         setFormationpage(renderFormationPage());
-    }, [numPeople, currSlide, locations, props.state])
+    }, [numPeople, currSlide, locations, props.state, showName])
 
     useEffect(async () => {
         setPieceLocations(pieceLocations.map((n, i) => {
             return i == currSlide ? locations : n;
         }))
     }, [numPeople, currSlide, locations])
-
+    
     useEffect(() => {
         console.log(pieceLocations);
         console.log(locations);
@@ -276,6 +279,7 @@ function Canvas(props){
     const renderFormationPage = () => {
         return (<FormationPage 
             ref={references}
+            showName={showName}
             names={props.names}
             new={props.state ? false: true}
             cWidth={cWidth} 
@@ -331,7 +335,9 @@ function Canvas(props){
         }
     }
 
-
+    const handleShowNames = () => {
+        toggleNames(!showName);
+    }
 
     return (
         <div>
@@ -387,7 +393,7 @@ function Canvas(props){
             </Box>
             <StyledDrawer
                 anchor="right"
-                open={drawerOpen}
+                open={true}
                 onClose={handleDrawer}
                 onOpen={handleDrawer}
                 variant="persistent">
@@ -408,11 +414,19 @@ function Canvas(props){
                             </Grid>
                     </Box>
                     <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="NEW SLIDES"/>
-                    <Box sx={{mx:2, my:1}}>
-                        <StyledIcon onClick={addFormations}><AddIcon sx={{color:"green"}}></AddIcon>Create New Slide</StyledIcon>
-                        <FormGroup sx={{color:"white"}}>
-                            <FormControlLabel control={<StyledCheckbox defaultChecked onClick={() => {setCopyLast(!copyLast);}} />} label="Copy from Last Slide" />
-                        </FormGroup>
+                    <Box sx={{mx:2, my:1, color:"white"}}>
+                        <StyledIcon onClick={addFormations}><AddIcon sx={{color:"green"}}></AddIcon></StyledIcon>Create New Slide
+                    </Box>
+                    <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="OPTIONS"/>
+                    <Box sx={{mx:2, my:1, color: "white"}}>
+                        <Grid direction="row">
+                            <Grid item>
+                                <StyledSwitch checked={showName} onClick={handleShowNames}/>Show Names
+                            </Grid>
+                            <Grid item>
+                                <StyledSwitch defaultChecked checked={copyLast} onClick={() => {setCopyLast(!copyLast);}}/>Copy from Last Slide
+                            </Grid>
+                        </Grid>
                     </Box>
                     <Box sx={{my:2, mx: 1}}>
                         <StyledButton text="Close" onClick={handleDrawer} width="50%" display="block" margin="0 auto"/>
