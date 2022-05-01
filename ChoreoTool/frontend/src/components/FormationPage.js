@@ -6,19 +6,12 @@ import Person from "./Person";
 const FormationPage = forwardRef((props, ref) => {
 
     const [currLocation, setCurrLocation] = useState(props.locations);
-    const [people, setPeople] = useState();
 
     const references = ref
 
     useEffect(() => {
         setCurrLocation(props.locations);
     })
-
-    useEffect(() => {
-        if (currLocation){
-            setPeople(renderPeople());
-        }
-    }, [currLocation]);
 
     const renderPeople = () => {
         return currLocation.map((n, index) => {
@@ -79,7 +72,7 @@ const FormationPage = forwardRef((props, ref) => {
                 />
             </Layer>
             <Layer>
-                {people}
+                {renderPeople()}
             </Layer>
         </Stage>
         </div>

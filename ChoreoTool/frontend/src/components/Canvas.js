@@ -99,7 +99,6 @@ function Canvas(props){
     const [copyLast, setCopyLast] = useState(true);
     const [dialogOpen, toggleDialogOpen] = useState(false);
     const [disableBack, setDisableBack] = useState(true);
-    const [formationPage, setFormationpage] = useState();
     const [showName, toggleNames] = useState(false);
 
     const references = useRef([]);
@@ -225,31 +224,21 @@ function Canvas(props){
     const onDrag = (id, x, y) => {
         const xRe = x % (cWidth / horizontalSections / 2);
         const yRe = y % (cHeight / verticalSections / 2);
-        x = (cWidth / horizontalSections / 2) - xRe < xRe ? x + ((cWidth / horizontalSections / 2) - xRe): x - xRe;
-        y = (cHeight / verticalSections / 2) - yRe < yRe ? y + ((cHeight / verticalSections / 2)- yRe): y - yRe;
+        const newX = (cWidth / horizontalSections / 2) - xRe < xRe ? x + ((cWidth / horizontalSections / 2) - xRe): x - xRe;
+        const newY = (cHeight / verticalSections / 2) - yRe < yRe ? y + ((cHeight / verticalSections / 2)- yRe): y - yRe;
         references.current[id]?.current.to({
-            x: x,
-            y: y,
+            x: newX,
+            y: newY,
         });
-        references.current[id]?.current.parent.children[0].to({
-            x:x,
-            y:y,
-        })
         setLocations(locations.map((n, i) => {
-            console.log(i, id);
-            return i == id ? [x, y] : n;
+            return i == id ? [newX, newY] : n;
         }))
+        return [newX, newY];
     }
 
     useEffect(() => {
         references.current=Array(props.state ? locations.length : props.names.length).fill().map((_, i) => 
             references.current[i] || createRef());
-        console.log(references);
-    })
-
-    useEffect(() => {
-        console.log(locations);
-        console.log(showName);
     })
 
     useEffect(async () => {
@@ -260,10 +249,6 @@ function Canvas(props){
             setDisableBack(false);
         }
     }, [currSlide]);
-
-    useEffect(() => {
-        setFormationpage(renderFormationPage());
-    }, [numPeople, currSlide, locations, props.state, showName])
 
     useEffect(async () => {
         setPieceLocations(pieceLocations.map((n, i) => {
@@ -276,29 +261,11 @@ function Canvas(props){
         console.log(locations);
     }, [currSlide, numPeople])
 
-    const renderFormationPage = () => {
-        return (<FormationPage 
-            ref={references}
-            showName={showName}
-            names={props.names}
-            new={props.state ? false: true}
-            cWidth={cWidth} 
-            cHeight={cHeight}
-            locations={locations}
-            horizontalSections={horizontalSections}
-            verticalSections={verticalSections}
-            onDrag={onDrag}
-            />)
-    }
-
-    const goNext = async() => {
+    const goNext = () => {
         if (currSlide +1 >= numSlides){
             toggleDialogOpen(!dialogOpen);
             return;
         }
-        setPieceLocations(pieceLocations.map((n, i) => {
-            return i == currSlide ? locations : n;
-        }))
         setCurrentSlide(currSlide+1);
         setLocations(() => {
             return pieceLocations[currSlide+1];
@@ -315,10 +282,7 @@ function Canvas(props){
         }
     }
 
-    const goBack = async() => {
-        setPieceLocations(pieceLocations.map((n, i) => {
-            return i == currSlide ? locations : n;
-        }))
+    const goBack = () => {
         setCurrentSlide(currSlide-1);
         setLocations(() => {
             return pieceLocations[currSlide-1];
@@ -348,7 +312,18 @@ function Canvas(props){
                 </div>
             </Box>
             <div style={{display:"block", margin:"0 auto"}}>
-                {formationPage}
+                <FormationPage 
+                    ref={references}
+                    showName={showName}
+                    names={props.names}
+                    new={props.state ? false: true}
+                    cWidth={cWidth} 
+                    cHeight={cHeight}
+                    locations={locations}
+                    horizontalSections={horizontalSections}
+                    verticalSections={verticalSections}
+                    onDrag={onDrag}
+                />
             </div>
             <Box sx={{my:3, mx: 2, alignItems:"center", justifyContent:"center"}}>
                 <Grid container direction="column" alignItems="center" justifyContent="center">
