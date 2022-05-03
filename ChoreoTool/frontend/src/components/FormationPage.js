@@ -6,6 +6,7 @@ import Person from "./Person";
 const FormationPage = forwardRef((props, ref) => {
 
     const [currLocation, setCurrLocation] = useState(props.locations);
+    const [people, setPeople] = useState();
 
     const references = ref
 
@@ -22,6 +23,8 @@ const FormationPage = forwardRef((props, ref) => {
                         hovering={true}
                         ref={references.current[index]}
                         onDrag={props.onDrag} 
+                        onDragHelp={props.onDragHelp}
+                        handleFocus={props.handleFocus}
                         id={index} 
                         key={index}
                         x={n[0]} 

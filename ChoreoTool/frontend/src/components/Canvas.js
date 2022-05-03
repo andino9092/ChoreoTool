@@ -9,8 +9,8 @@ import StyledButton from "./StyledButton";
 import FormationPage from "./FormationPage";
 import StyledDivider from "./StyledDivider";
 import StyledTitle from "./StyledTitle";
+import StyledTextForm from "./StyledTextForm";
 import {styled} from "@mui/material/styles"
-import { green } from "@mui/material/colors";
 
 const StyledDialog = styled(Dialog)(({
     '&.MuiDialog-root':{
@@ -100,9 +100,17 @@ function Canvas(props){
     const [dialogOpen, toggleDialogOpen] = useState(false);
     const [disableBack, setDisableBack] = useState(true);
     const [showName, toggleNames] = useState(false);
+    const [focused, toggleFocus] = useState(false);
+    const [focusedIndex, setFocusedIndex] = useState(0);
 
     const references = useRef([]);
     const history = useNavigate();
+
+    let focusedPerson = {
+        name: focused ? props.names[focusedIndex]: "",
+        x: focused ? locations[focusedIndex][0]: 50,
+        y: focused ? locations[focusedIndex][1]: 50,
+    }
 
     // Have a scale version that opens a page that allows you to see everything
     // Have Name displayed and logout Panel bar, one with down array and lists some settings
@@ -110,7 +118,6 @@ function Canvas(props){
     // Find fix for not beign able to close after clicking backdrop for drawer
     // Stage Front label
     // Add error handling for text fields
-    // DONE Add await and async functions to Login button
     // Have no internet state
     // Check to see if drawer doesnt close outside click because its in Canvas rather than CreateFormationSlide
     // Choosing slide 
@@ -121,13 +128,15 @@ function Canvas(props){
     // *** Deployment with django-heroku
     // Allow tighter formations 
     // Add animation to the icons at the bottom in case of extensions
-    // Fix transitions from form to canvas, add animation to continue button
-
-    // DONE Logout button 
-
-    // References bugged as well when getting formations from dashboard
     // Clicking on Create Formation while on canvas received from dashboard doesnt go to a new canvas
-    // References are bugged as well when adding a person, references are not unique either
+    // Add focus on a member
+    
+    // DONE: Add await and async functions to Login button
+    // DONE: Fix transitions from form to canvas, add animation to continue button
+    // DONE Logout button 
+    // FIXED: References bugged as well when getting formations from dashboard
+
+    // FIXED: References are bugged as well when adding a person, references are not unique either
     //      Problem is the new people arent rendering to their next position cause they have no prev position
     // Solution: guided formation making
     //      Before rendering Canvas, ask for total # of people and # of people on stage and # of ppl backstage
@@ -230,10 +239,13 @@ function Canvas(props){
             x: newX,
             y: newY,
         });
-        setLocations(locations.map((n, i) => {
-            return i == id ? [newX, newY] : n;
-        }))
         return [newX, newY];
+    }
+
+    const onDragHelp = (id, x, y) => {
+        setLocations(locations.map((n, i) => {
+            return i == id ? [x, y] : n;
+        }))
     }
 
     useEffect(() => {
@@ -291,7 +303,6 @@ function Canvas(props){
             const data = pieceLocations[currSlide-1][i];
             const prevX = data ? data[0] : null;
             const prevY = data ? data[1] : null;
-
             references.current[i]?.current.to({
                 y: prevY,
                 x: prevX,
@@ -302,6 +313,18 @@ function Canvas(props){
     const handleShowNames = () => {
         toggleNames(!showName);
     }
+
+    const handleFocus = (name, x, y, id) => {
+        toggleFocus(true);
+        setFocusedIndex(id);
+        focusedPerson.name = name;
+        focusedPerson.x = x;
+        focusedPerson.y = y;
+    }
+
+    useEffect(() => {
+        console.log(focused);
+    })
 
     return (
         <div>
@@ -323,6 +346,8 @@ function Canvas(props){
                     horizontalSections={horizontalSections}
                     verticalSections={verticalSections}
                     onDrag={onDrag}
+                    onDragHelp={onDragHelp}
+                    handleFocus={handleFocus}
                 />
             </div>
             <Box sx={{my:3, mx: 2, alignItems:"center", justifyContent:"center"}}>
@@ -377,23 +402,39 @@ function Canvas(props){
                         <h1 style={{color:"white", display:"block", margin:"0 auto", textAlign:"center",}}>Tools</h1>
                     </Box>
                     <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="CREATE MARKER"/>
-                    <Box sx={{height:"150px"}}>   
-                            <Box sx={{my: 2, mx: 1, alignItems:"center"}}>
-                                <Grid container direction={"row"} alignItems="center" justifyContent="center">
-                                    <StyledText value={rowText} onChange={handleTextField} name="y" label="Row" width="75px" height="50px" padding="2px"/>
-                                    <StyledText value={colText} onChange={handleTextField} name="x" label="Col" width="75px" height="50px" padding="2px"/>
-                                </Grid>  
-                            </Box>
-                            <Grid container direction={"center"} alignItems="center" justifyContent="center">
-                                    <StyledButton text="Create Person" onClick={addPerson} style={{ display:"block", margin:"0 auto"}}/>
+                    <Box sx={{mx:2, my:2, color:"white"}}>
+                        <Grid container direction={"row"} alignItems="center" justifyContent="center">
+                            <Grid item sx={{mx:1, my:2}}>
+                                <StyledText value={rowText} onChange={handleTextField} name="y" label="Row" width="75px" height="50px" padding="2px"/>
                             </Grid>
+                            <Grid item sx={{mx:1, my:2}}>
+                                <StyledText value={colText} onChange={handleTextField} name="x" label="Col" width="75px" height="50px" padding="2px"/>
+                            </Grid>
+                            <Grid item sx={{mx:1, my:1}}> 
+                                <StyledButton disabled text="Create Person" onClick={addPerson} style={{ display:"block", margin:"0 auto"}}/>
+                            </Grid>
+                        </Grid>  
                     </Box>
                     <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="NEW SLIDES"/>
-                    <Box sx={{mx:2, my:1, color:"white"}}>
+                    <Box sx={{mx:2, my:2, color:"white"}}>
                         <StyledIcon onClick={addFormations}><AddIcon sx={{color:"green"}}></AddIcon></StyledIcon>Create New Slide
                     </Box>
+                    {focused && 
+                        <><StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="FOCUS"/>
+                        <Box sx={{mx:2, my:3, color: "white"}}>
+                            <Grid container direction="row" alignItems="center" justifyContent="center">
+                            <StyledTextForm variant="standard" size="1" value={focusedPerson.name} placeholder="Name" onChange={handleTextField}/>
+                                <Grid item sx={{mx:1, my: 3}}>
+                                    <StyledText value={focusedPerson.x} onChange={handleTextField} name="focusedX" label="X" width="75px" height="50px" />
+                                </Grid>
+                                <Grid item sx={{mx:1, my: 3}}>
+                                    <StyledText value={focusedPerson.y} onChange={handleTextField} name="focusedY" label="Y" width="75px" height="50px"/>
+                                </Grid>
+                            </Grid>
+                        </Box></>
+                    }
                     <StyledDivider textAlign="center" height="10px" fontSize="10px" color="white" text="OPTIONS"/>
-                    <Box sx={{mx:2, my:1, color: "white"}}>
+                    <Box sx={{mx:2, my:3, color: "white"}}>
                         <Grid direction="row">
                             <Grid item>
                                 <StyledSwitch checked={showName} onClick={handleShowNames}/>Show Names
@@ -403,7 +444,7 @@ function Canvas(props){
                             </Grid>
                         </Grid>
                     </Box>
-                    <Box sx={{my:2, mx: 1}}>
+                    <Box sx={{my:2, mx: 3}}>
                         <StyledButton text="Close" onClick={handleDrawer} width="50%" display="block" margin="0 auto"/>
                     </Box>
                 </Box>

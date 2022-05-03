@@ -1,3 +1,7 @@
 Canvas.js has preview to next carousel and the current one
 Lyrics on canvas.js
 Drawer on CreateFormationSlide?
+
+Notes for Future:
+Sometimes not good to have components rely on props because it can cause instant rendering
+Not great for animations when you want to keep track of the locations and etc.

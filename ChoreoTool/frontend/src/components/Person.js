@@ -6,6 +6,8 @@ import { Circle, Text, Group} from "react-konva";
 const Person = forwardRef((props, ref) => {
     const [hover, toggleHover] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [x, setX] = useState(props.x);
+    const [y, setY] = useState(props.y);
 
     const handleHover = () => {
         toggleHover(!hover);
@@ -19,10 +21,11 @@ const Person = forwardRef((props, ref) => {
           }}
           onDragEnd={e => {
             setIsDragging(false);
-            props.onDrag(props.id, e.target.x(), e.target.y());
+            var f = props.onDrag(props.id, e.target.x(), e.target.y());
+            props.onDragHelp(props.id, f[0], f[1]);
           }}
-          x={props.x} 
-          y={props.y} 
+          x={x} 
+          y={y} 
           ref={ref}
         >
         <Text opacity={props.showName ? 1 : 0} text={props.name} y={20} align="center" />
@@ -33,6 +36,7 @@ const Person = forwardRef((props, ref) => {
             stroke="black"
             onMouseEnter={props.hovering ? handleHover: ""}
             onMouseLeave={props.hovering ? handleHover: ""}
+            onClick={() => props.handleFocus(props.name, x, y, props.id)}
             >
         </Circle>
       </Group>

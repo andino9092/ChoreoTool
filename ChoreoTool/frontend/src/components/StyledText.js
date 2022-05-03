@@ -39,6 +39,7 @@ export default function StyledText(props){
             name={props.name}
             value={props.value}
             onChange={props.onChange}
+            placeholder={props.placeholder}
             sx={{color:props.color, 
                 width:props.width, 
                 height:props.height, 
