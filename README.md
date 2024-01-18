@@ -17,3 +17,5 @@ Implementations to be done:
   - Adding in a syncing option that syncs to current spotify song being played
   - Adding in fullscreen option and screen recording 
   - Adding in keybind for showing names of performers
+
+*** UPDATED TOOL : (https://choreotool.vercel.app/login)
